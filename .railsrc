@@ -1,0 +1,15 @@
+--database=sqlite3
+--skip-main
+--skip-javascript
+--skip-hotwire
+--skip-asset-pipeline
+--skip-jbuilder
+--skip-active-storage
+--skip-action-mailbox
+--skip-action-text
+--skip-system-test
+--skip-thruster
+--skip-kamal
+--skip-keeps
+--skip-bundle
+--skip-decrypted-diffs

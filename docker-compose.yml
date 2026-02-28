@@ -1,0 +1,47 @@
+# ============================================================
+# Configurações compartilhadas (YAML anchors)
+# ============================================================
+x-app: &app
+  build:
+    context: .
+    target: development          # aponta para o stage de dev
+    args:
+      RUBY_VERSION: "4.0.1"
+      ALPINE_VERSION: "3.23"
+      # BUILD TIME: passa RAILS_ENV como ARG para o Dockerfile.
+      # Controla quais gems são instaladas e se assets são compilados.
+      # Deve sempre bater com o valor definido em `environment` abaixo.
+      RAILS_ENV: development
+  environment: &env
+    # RUNTIME: define RAILS_ENV para o processo que roda no container.
+    # O Rails, rake tasks e o servidor usam este valor.
+    # Precisa estar alinhado com o ARG acima — os dois são necessários.
+    RAILS_ENV: development
+    BUNDLE_PATH: /app/vendor/bundle
+  volumes:
+    - .:/app # hot-reload do código
+    # O arquivo do SQLite fica dentro de /app/storage (padrão Rails),
+    # que já está coberto pelo volume acima (. → /app).
+    - bundle_cache:/app/vendor/bundle
+  stdin_open: true
+  tty: true
+
+# ============================================================
+# Serviços
+# ============================================================
+services:
+  app:
+    <<: *app
+    command: bundle exec rails server -b 0.0.0.0
+    ports:
+      - "3000:3000"
+      - "28080:28080"
+      - "3036:3036"
+    env_file:
+      - .env # variáveis locais (não sobe para o git)
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  bundle_cache:      
