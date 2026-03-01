@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: payloop
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: bundle exec rails server -b 0.0.0.0
+    targetPort: 3000
+
+    # Build arg: garante gems enxutas e assets pré-compilados
+    dockerBuildArgs:
+      RAILS_ENV: production
+
+    # Branch que dispara o deploy automático
+    branch: main
+    autoDeploy: true
+
+    # Pre-deploy: roda migrations antes de subir o novo container
+    preDeployCommand: bundle exec rails db:migrate
+
+    # Plano gratuito
+    plan: free
+
+    # Variáveis de ambiente em runtime
+    # SECRET_KEY_BASE deve ser definido manualmente no painel do Render
+    # em: Dashboard → payloop → Environment → Add Environment Variable
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: SECRET_KEY_BASE
+        generateValue: true  # Render gera automaticamente
