@@ -21,6 +21,9 @@ ARG RAILS_ENV=development      # padrão seguro: nunca sobe prod por acidente
 # ============================================================
 # Stage 1 — base
 #   Dependências de sistema + usuário não-root
+#   Apenas o essencial para rodar o app em qualquer ambiente.
+#   nodejs/npm/yarn foram movidos para o builder — não são
+#   necessários em runtime (produção ou desenvolvimento).
 # ============================================================
 FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -51,9 +54,6 @@ ENV RAILS_ENV=${RAILS_ENV} \
 RUN apk add --no-cache \
         build-base \
         libc6-compat \
-        nodejs \
-        npm \
-        yarn \
         tzdata \
         yaml-dev \
     && ln -fs /usr/share/zoneinfo/Brazil/East /etc/localtime \
@@ -63,6 +63,8 @@ RUN apk add --no-cache \
 # ============================================================
 # Stage 2 — builder
 #   Instala gems + pacotes JS; resultado vai para o stage final.
+#   nodejs/npm/yarn ficam aqui — usados apenas para pré-compilar
+#   assets e instalar dependências JS. Não seguem para produção.
 #
 #   Este stage usa $RAILS_ENV (ARG/ENV herdado do base) para
 #   tomar decisões que afetam o conteúdo da imagem final:
@@ -79,8 +81,10 @@ FROM base AS builder
 # precisam do ARG explicitamente declarado no stage atual.
 ARG RAILS_ENV
 
-# Instala jemalloc como root, antes de trocar de usuário
-RUN apk add --no-cache jemalloc
+# Instala jemalloc + ferramentas JS como root, antes de trocar de usuário.
+# nodejs/npm/yarn são necessários apenas no builder para instalar
+# dependências JS e pré-compilar assets — não seguem para os stages finais.
+RUN apk add --no-cache jemalloc nodejs npm yarn
 
 USER $USER
 WORKDIR $HOME
@@ -134,6 +138,8 @@ EXPOSE 3000 28080
 # ============================================================
 # Stage 4 — production
 #   Imagem para o Render e CI/CD.
+#   Herda do base — sem nodejs/npm/yarn, imagem mais enxuta e
+#   deploy mais rápido.
 #
 #   No Render, configure:
 #     Build Arg:            RAILS_ENV=production  ← controla o build
