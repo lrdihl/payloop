@@ -33,3 +33,5 @@ services:
         value: "true"
       - key: SECRET_KEY_BASE
         generateValue: true  # Render gera automaticamente
+      - key: RAILS_MASTER_KEY
+        sync: false  # indica que deve ser definida manualmente no painel
