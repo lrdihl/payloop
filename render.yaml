@@ -10,6 +10,7 @@ services:
     # Build arg: garante gems enxutas e assets pré-compilados
     dockerBuildArgs:
       RAILS_ENV: production
+      SECRET_KEY_BASE: dummy
 
     # Branch que dispara o deploy automático
     branch: main

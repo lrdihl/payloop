@@ -76,10 +76,15 @@ RUN apk add --no-cache \
 # ============================================================
 FROM base AS builder
 
-# Re-declara o ARG para que o valor esteja acessível nos RUN abaixo.
+# Re-declara os ARGs para que os valores estejam acessíveis nos RUN abaixo.
 # O ENV herdado do stage base já cobre o runtime, mas comandos RUN
-# precisam do ARG explicitamente declarado no stage atual.
+# precisam dos ARGs explicitamente declarados no stage atual.
 ARG RAILS_ENV
+# SECRET_KEY_BASE é necessário durante o assets:precompile pois o Rails
+# inicializa a aplicação nesse momento. Um valor dummy é suficiente aqui —
+# o valor real vem do painel do Render em runtime.
+ARG SECRET_KEY_BASE=dummy
+ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
 
 # Instala jemalloc como root, antes de trocar de usuário.
 RUN apk add --no-cache jemalloc
