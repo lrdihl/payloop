@@ -1,12 +1,15 @@
-name: CI
+name: CI/CD
 
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
 
@@ -19,8 +22,14 @@ jobs:
       - name: Brakeman
         run: bundle exec brakeman --no-pager -q
 
+      - name: Zeitwerk
+        run: bin/rails zeitwerk:check
+        env:
+          RAILS_ENV: test
+
   lint:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +44,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     env:
       RAILS_ENV: test
@@ -52,10 +62,7 @@ jobs:
         run: bin/rails db:schema:load
 
       - name: RSpec
-        run: bundle exec rspec
-
-      - name: Zeitwerk
-        run: bin/rails zeitwerk:check
+        run: bundle exec rspec --format progress
 
       - name: Check coverage
         run: |
@@ -73,6 +80,7 @@ jobs:
 
   dependency-review:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
 
@@ -80,3 +88,13 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: critical
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy no Render
+        run: |
+          curl -f -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
+            -H "Content-Type: application/json"
