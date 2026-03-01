@@ -106,6 +106,45 @@ Para visualizar a cobertura de testes:
 make teste_coverage
 ```
 
+A cobertura mínima exigida é de **90%**. O SimpleCov gera um relatório em `coverage/index.html` após cada execução.
+
+---
+
+## CI/CD
+
+### Integração Contínua (CI)
+
+Todo Pull Request aberto para a branch `main` passa obrigatoriamente pelos seguintes checks antes de poder ser mergeado:
+
+| Check | Ferramenta | O que valida |
+|---|---|---|
+| Lint | RuboCop | Estilo e consistência do código |
+| Security | Brakeman | Vulnerabilidades de segurança no código Rails |
+| Autoload | Zeitwerk | Convenções de nomeação e carregamento de arquivos |
+| Testes | RSpec | Suíte completa de testes |
+| Cobertura | SimpleCov | Cobertura mínima de 90% |
+| Dependências | Dependency Review | Vulnerabilidades críticas introduzidas no PR |
+
+A branch `main` está protegida — push direto é bloqueado para todos. Todo código passa pelo CI antes de ser mergeado.
+
+### Antes de abrir um PR
+
+Rode o CI localmente para garantir que tudo passa:
+
+```bash
+make ci
+```
+
+Se o RuboCop apontar ofensas, corrija automaticamente com:
+
+```bash
+make lint_fix
+```
+
+### Dependabot
+
+O Dependabot monitora gems (Bundler) e actions do GitHub Actions, abrindo PRs automáticos semanalmente para manter as dependências atualizadas. PRs do Dependabot passam pelo mesmo CI antes de serem mergeados.
+
 ---
 
 ## Deploy (produção)

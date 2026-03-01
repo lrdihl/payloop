@@ -42,14 +42,31 @@ vite:
 logs:
 	${COMPOSE_CMD} logs -f --tail 1000 app
 
+# Roda os testes com saída resumida
 teste:
-	$(EXEC) bundle exec rspec
-
-teste_coverage:
 	$(EXEC) bundle exec rspec --format progress
+
+# Roda os testes com saída detalhada + relatório de cobertura (SimpleCov)
+teste_coverage:
+	$(EXEC) bundle exec rspec --format documentation
 
 lint:
 	$(EXEC) bundle exec rubocop
 
 lint_fix:
 	$(EXEC) bundle exec rubocop -a
+
+# Roda lint + Zeitwerk + security + testes em sequência — para no primeiro erro
+ci:
+	@echo "🔍 Rodando RuboCop...\n" && \
+	$(EXEC) bundle exec rubocop --parallel --format progress && \
+	echo "\n✅ RuboCop OK\n------------------\n" && \
+  echo "🔍 Rodando Zeitwerk...\n" && \
+	$(EXEC) bin/rails zeitwerk:check && \
+	echo "\n✅ Zeitwerk OK\n------------------\n" && \
+	echo "🔍 Rodando Brakeman...\n" && \
+	$(EXEC) bundle exec brakeman --no-pager -q --exit-on-warn && \
+	echo "\n✅ Brakeman OK\n------------------\n" && \
+	echo "🔍 Rodando RSpec...\n" && \
+	$(EXEC) bundle exec rspec --format progress && \
+	echo "\n✅ RSpec OK"

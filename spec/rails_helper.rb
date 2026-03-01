@@ -1,9 +1,11 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
+  minimum_coverage 90
   add_filter '/spec/'
   add_filter '/config/'
   add_filter '/vendor/'
 end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
