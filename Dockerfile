@@ -84,7 +84,7 @@ ARG RAILS_ENV
 # Instala jemalloc + ferramentas JS como root, antes de trocar de usuário.
 # nodejs/npm/yarn são necessários apenas no builder para instalar
 # dependências JS e pré-compilar assets — não seguem para os stages finais.
-RUN apk add --no-cache jemalloc nodejs npm yarn
+RUN apk add --no-cache jemalloc nodejs npm
 
 USER $USER
 WORKDIR $HOME
@@ -92,7 +92,7 @@ WORKDIR $HOME
 # Copia apenas os manifests primeiro para aproveitar o cache de camadas:
 # enquanto Gemfile.lock e package.json não mudarem, o Docker reutiliza
 # as camadas de bundle/yarn sem reinstalar tudo.
-COPY --chown=$USER:$GROUP .ruby-* Gemfile* package* yarn* ./
+COPY --chown=$USER:$GROUP .ruby-* Gemfile* package* ./
 
 RUN gem install bundler -v "$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1)" \
     && bundle config set --local path "$BUNDLE_PATH" \
@@ -105,7 +105,7 @@ RUN gem install bundler -v "$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1)
          bundle config set --local without "development test"; \
        fi \
     && bundle install \
-    && yarn install --frozen-lockfile
+    && npm ci
 
 # Copia o restante do código após instalar dependências,
 # para não invalidar o cache de gems a cada mudança de arquivo.

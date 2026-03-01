@@ -34,7 +34,7 @@ clean:
 
 deps:
 	${EXEC} bundle install
-	${EXEC} yarn
+	${EXEC} npm install
 
 vite:
 	$(EXEC) bin/vite dev -- --host 0.0.0.0 --port 3036 -l info
