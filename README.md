@@ -145,6 +145,14 @@ make lint_fix
 
 O Dependabot monitora gems (Bundler) e actions do GitHub Actions, abrindo PRs automáticos semanalmente para manter as dependências atualizadas. PRs do Dependabot passam pelo mesmo CI antes de serem mergeados.
 
+**O que pode evoluir quando o projeto crescer:**
+
+- Audit de gems — o bundle audit checa vulnerabilidades conhecidas nas gems instaladas, complementa o Dependabot
+- Testes de sistema — RSpec com Capybara/Selenium para fluxos críticos end-to-end
+- Cache do CI — conforme o projeto crescer, o tempo de pipeline vai aumentar. Vale adicionar cache do bundle e do banco
+- Notificação de falha — um alerta no Slack/email quando o CI falha na main
+- Cobertura por arquivo — o SimpleCov tem como configurar cobertura mínima por camada (models, controllers, services) e não só global
+
 ---
 
 ## Deploy (produção)
