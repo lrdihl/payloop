@@ -17,7 +17,7 @@ services:
     autoDeploy: true
 
     # Pre-deploy: roda migrations antes de subir o novo container
-    preDeployCommand: bundle exec rails db:migrate
+    preDeployCommand: BUNDLE_PATH=/app/vendor/bundle BUNDLE_WITHOUT="development:test" bundle exec rails db:migrate
 
     # Plano gratuito
     plan: free
