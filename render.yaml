@@ -36,3 +36,7 @@ services:
         generateValue: true  # Render gera automaticamente
       - key: RAILS_MASTER_KEY
         sync: false  # indica que deve ser definida manualmente no painel
+      - key: BUNDLE_PATH
+        value: /app/vendor/bundle
+      - key: BUNDLE_WITHOUT
+        value: "development:test"
