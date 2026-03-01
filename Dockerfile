@@ -21,9 +21,8 @@ ARG RAILS_ENV=development      # padrão seguro: nunca sobe prod por acidente
 # ============================================================
 # Stage 1 — base
 #   Dependências de sistema + usuário não-root
-#   Apenas o essencial para rodar o app em qualquer ambiente.
-#   nodejs/npm/yarn foram movidos para o builder — não são
-#   necessários em runtime (produção ou desenvolvimento).
+#   nodejs/npm incluídos para suporte ao desenvolvimento local
+#   e execução de scripts JS. yarn removido — projeto usa npm/Vite.
 # ============================================================
 FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION} AS base
 
@@ -54,6 +53,8 @@ ENV RAILS_ENV=${RAILS_ENV} \
 RUN apk add --no-cache \
         build-base \
         libc6-compat \
+        nodejs \
+        npm \
         tzdata \
         yaml-dev \
     && ln -fs /usr/share/zoneinfo/Brazil/East /etc/localtime \
@@ -63,8 +64,7 @@ RUN apk add --no-cache \
 # ============================================================
 # Stage 2 — builder
 #   Instala gems + pacotes JS; resultado vai para o stage final.
-#   nodejs/npm/yarn ficam aqui — usados apenas para pré-compilar
-#   assets e instalar dependências JS. Não seguem para produção.
+#   jemalloc instalado aqui para redução de memória em runtime.
 #
 #   Este stage usa $RAILS_ENV (ARG/ENV herdado do base) para
 #   tomar decisões que afetam o conteúdo da imagem final:
@@ -81,17 +81,15 @@ FROM base AS builder
 # precisam do ARG explicitamente declarado no stage atual.
 ARG RAILS_ENV
 
-# Instala jemalloc + ferramentas JS como root, antes de trocar de usuário.
-# nodejs/npm/yarn são necessários apenas no builder para instalar
-# dependências JS e pré-compilar assets — não seguem para os stages finais.
-RUN apk add --no-cache jemalloc nodejs npm
+# Instala jemalloc como root, antes de trocar de usuário.
+RUN apk add --no-cache jemalloc
 
 USER $USER
 WORKDIR $HOME
 
 # Copia apenas os manifests primeiro para aproveitar o cache de camadas:
-# enquanto Gemfile.lock e package.json não mudarem, o Docker reutiliza
-# as camadas de bundle/yarn sem reinstalar tudo.
+# enquanto Gemfile.lock e package-lock.json não mudarem, o Docker reutiliza
+# as camadas de bundle/npm sem reinstalar tudo.
 COPY --chown=$USER:$GROUP .ruby-* Gemfile* package* ./
 
 RUN gem install bundler -v "$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1)" \
