@@ -97,15 +97,12 @@ WORKDIR $HOME
 # as camadas de bundle/npm sem reinstalar tudo.
 COPY --chown=$USER:$GROUP .ruby-* Gemfile* package* ./
 
+# --global garante que a configuração persiste para o bundle install
+# diferente de --local que salvaria em .bundle/config e poderia não
+# ser encontrado corretamente pelo stage de produção.
 RUN gem install bundler -v "$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1)" \
-    && bundle config set --local path "$BUNDLE_PATH" \
-    && bundle config set --local jobs "$BUNDLE_JOBS" \
-    && bundle config set --local retry "$BUNDLE_RETRY" \
-    # BUILD TIME: decide quais gems instalar com base no ARG RAILS_ENV.
-    # Se fosse ENV (runtime), o bundle install já teria rodado com
-    # todas as gems — esta otimização não funcionaria.
     && if [ "$RAILS_ENV" = "production" ]; then \
-         bundle config set --local without "development test"; \
+         bundle config set --global without "development:test"; \
        fi \
     && bundle install \
     && npm ci
@@ -141,8 +138,6 @@ EXPOSE 3000 28080
 # ============================================================
 # Stage 4 — production
 #   Imagem para o Render e CI/CD.
-#   Herda do base — sem nodejs/npm/yarn, imagem mais enxuta e
-#   deploy mais rápido.
 #
 #   No Render, configure:
 #     Build Arg:            RAILS_ENV=production  ← controla o build
@@ -159,10 +154,10 @@ WORKDIR $HOME
 
 COPY --chown=$USER:$GROUP --from=builder $HOME $HOME
 
-# Variáveis esperadas pelo Render em runtime.
-# Segredos (SECRET_KEY_BASE, DATABASE_URL, etc.) NÃO devem ficar
-# aqui — devem ser definidos exclusivamente no painel do Render.
-ENV RAILS_LOG_TO_STDOUT=true \
+# BUNDLE_WITHOUT garante que o Bundler não tenta carregar gems de
+# development/test que não foram instaladas no build de produção.
+ENV BUNDLE_WITHOUT="development:test" \
+    RAILS_LOG_TO_STDOUT=true \
     RAILS_SERVE_STATIC_FILES=true
 
 ENTRYPOINT ["bin/docker-entrypoint"]
