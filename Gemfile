@@ -38,6 +38,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails"
+  gem 'guard-rspec', require: false
   gem "factory_bot_rails"
   gem "faker"
   gem "simplecov", require: false

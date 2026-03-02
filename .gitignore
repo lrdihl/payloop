@@ -33,3 +33,5 @@ node_modules
 
 /.cache/*
 /.npm/*
+/coverage/
+.guard_history
