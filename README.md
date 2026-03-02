@@ -87,9 +87,10 @@ A aplicação estará disponível em [http://localhost:3000](http://localhost:30
 | `make db_seed` | Popula o banco com dados iniciais |
 | `make db_reset` | Recria o banco do zero |
 | `make teste` | Roda a suíte de testes com RSpec |
-| `make teste_coverage` | Roda testes com relatório de cobertura |
+| `make teste_coverage` | Roda testes com relatório de cobertura detalhado |
 | `make lint` | Analisa o código com RuboCop |
 | `make lint_fix` | Corrige automaticamente as ofensas do RuboCop |
+| `make ci` | Roda RuboCop + Zeitwerk + Brakeman + RSpec em sequência |
 | `make clean` | Remove containers, volumes e imagens locais |
 
 ---
@@ -141,27 +142,48 @@ Se o RuboCop apontar ofensas, corrija automaticamente com:
 make lint_fix
 ```
 
+### Entrega Contínua (CD)
+
+O deploy é automático: ao mergear um PR na `main`, o GitHub Actions dispara o deploy no Render via webhook. O fluxo completo é:
+
+```
+PR mergeado na main
+      ↓
+GitHub Actions dispara o webhook do Render
+      ↓
+Render faz o build da imagem Docker (stage production)
+      ↓
+Migrations rodam automaticamente via bin/docker-entrypoint
+      ↓
+Novo container sobe em produção
+```
+
+A infraestrutura está declarada no `render.yaml` na raiz do repositório. O ambiente de produção está disponível em [https://payloop-k2tq.onrender.com](https://payloop-k2tq.onrender.com).
+
+### Variáveis de ambiente em produção
+
+| Variável | Origem |
+|---|---|
+| `RAILS_ENV` | `render.yaml` |
+| `RAILS_LOG_TO_STDOUT` | `render.yaml` |
+| `RAILS_SERVE_STATIC_FILES` | `render.yaml` |
+| `SECRET_KEY_BASE` | Gerado automaticamente pelo Render |
+| `RAILS_MASTER_KEY` | Definido manualmente no painel do Render |
+| `APP_HOST` | Definido manualmente no painel do Render |
+
+Segredos nunca ficam no repositório — são definidos exclusivamente no painel do Render.
+
 ### Dependabot
 
 O Dependabot monitora gems (Bundler) e actions do GitHub Actions, abrindo PRs automáticos semanalmente para manter as dependências atualizadas. PRs do Dependabot passam pelo mesmo CI antes de serem mergeados.
 
-**O que pode evoluir quando o projeto crescer:**
+### O que pode evoluir quando o projeto crescer
 
-- Audit de gems — o bundle audit checa vulnerabilidades conhecidas nas gems instaladas, complementa o Dependabot
-- Testes de sistema — RSpec com Capybara/Selenium para fluxos críticos end-to-end
-- Cache do CI — conforme o projeto crescer, o tempo de pipeline vai aumentar. Vale adicionar cache do bundle e do banco
-- Notificação de falha — um alerta no Slack/email quando o CI falha na main
-- Cobertura por arquivo — o SimpleCov tem como configurar cobertura mínima por camada (models, controllers, services) e não só global
-
----
-
-## Deploy (produção)
-
-A imagem de produção é construída via multi-stage build. Ao fazer deploy (ex: Render), configure:
-
-- **Build Arg:** `RAILS_ENV=production`
-- **Environment Variable:** `RAILS_ENV=production`
-- **Demais segredos** (`SECRET_KEY_BASE`, `DATABASE_URL`, etc.) devem ser definidos exclusivamente nas variáveis de ambiente da plataforma — nunca no repositório.
+- **Audit de gems** — o `bundle audit` checa vulnerabilidades conhecidas nas gems instaladas, complementa o Dependabot
+- **Testes de sistema** — RSpec com Capybara/Selenium para fluxos críticos end-to-end
+- **Cache do CI** — conforme o projeto crescer, o tempo de pipeline vai aumentar; vale adicionar cache do bundle
+- **Notificação de falha** — um alerta no Slack/email quando o CI falha na main
+- **Cobertura por camada** — o SimpleCov permite configurar cobertura mínima por camada (models, controllers, services) e não só global
 
 ---
 
