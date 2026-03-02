@@ -179,7 +179,6 @@ O Dependabot monitora gems (Bundler) e actions do GitHub Actions, abrindo PRs au
 
 ### O que pode evoluir quando o projeto crescer
 
-- **Audit de gems** — o `bundle audit` checa vulnerabilidades conhecidas nas gems instaladas, complementa o Dependabot
 - **Testes de sistema** — RSpec com Capybara/Selenium para fluxos críticos end-to-end
 - **Cache do CI** — conforme o projeto crescer, o tempo de pipeline vai aumentar; vale adicionar cache do bundle
 - **Notificação de falha** — um alerta no Slack/email quando o CI falha na main
