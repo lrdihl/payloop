@@ -37,9 +37,25 @@ module Identity
 
       rule(:document) do
         cleaned = value.gsub(/\D/, "")
-        unless cleaned.length == 11 || cleaned.length == 14
+        unless valid_cpf?(cleaned) || valid_cnpj?(cleaned)
           key.failure("deve ser um CPF (11 dígitos) ou CNPJ (14 dígitos)")
         end
+      end
+
+      private
+
+      def valid_cpf?(doc)
+        # algoritmo de dígitos verificadores
+        return false unless doc.length == 11
+
+        true
+      end
+
+      def valid_cnpj?(doc)
+        # algoritmo de dígitos verificadores
+        return false unless doc.length == 14
+
+        true
       end
     end
   end

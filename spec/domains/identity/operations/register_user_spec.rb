@@ -38,6 +38,7 @@ RSpec.describe Identity::Operations::RegisterUser do
       result = operation.call(valid_params)
 
       expect(result).to be_failure
+      pp result
       expect(result.failure[:type]).to eq(:persistence)
     end
   end

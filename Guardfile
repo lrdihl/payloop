@@ -13,7 +13,6 @@ notification :off
 
 # ── RSpec ─────────────────────────────────────────────────────────────────────
 guard :rspec, cmd: "bundle exec rspec --format progress --color --no-profile" do
-
   # Roda tudo quando o spec_helper ou rails_helper muda
   watch("spec/spec_helper.rb")   { "spec" }
   watch("spec/rails_helper.rb")  { "spec" }
