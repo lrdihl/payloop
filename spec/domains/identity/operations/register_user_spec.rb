@@ -23,5 +23,22 @@ RSpec.describe Identity::Operations::RegisterUser do
       expect(result.failure[:type]).to eq(:validation)
       expect(result.failure[:errors][:email]).not_to be_empty
     end
+
+    it "não cria User quando a validação falha" do
+      operation.call(valid_params.merge(password: "123"))
+      expect(User.find_by(email: valid_params[:email])).to be_nil
+    end
+  end
+
+  # ─── Falha no step :create_user ─────────────────────────────────────────────
+  describe "quando o email já existe" do
+    before { create(:user, email: valid_params[:email]) }
+
+    it "retorna Failure com tipo :persistence" do
+      result = operation.call(valid_params)
+
+      expect(result).to be_failure
+      expect(result.failure[:type]).to eq(:persistence)
+    end
   end
 end
