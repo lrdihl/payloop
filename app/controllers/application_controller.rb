@@ -1,3 +1,4 @@
+# app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
@@ -28,7 +29,7 @@ class ApplicationController < ActionController::Base
       @errors = errors
       render_failure(:unprocessable_entity)
     in Dry::Monads::Failure(error)
-      @errors = { base: [error.to_s] }
+      @errors = { base: [ error.to_s ] }
       render_failure(:unprocessable_entity)
     end
   end

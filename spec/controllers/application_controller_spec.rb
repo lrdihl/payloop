@@ -20,15 +20,15 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     def update
-      handle_result(Failure({ type: :validation, errors: { name: ["inválido"] } })) {}
+      handle_result(Failure({ type: :validation, errors: { name: [ "inválido" ] } })) { }
     end
 
     def destroy
-      handle_result(Failure({ type: :persistence, errors: { base: ["erro"] } })) {}
+      handle_result(Failure({ type: :persistence, errors: { base: [ "erro" ] } })) { }
     end
 
     def edit
-      handle_result(Failure("erro genérico")) {}
+      handle_result(Failure("erro genérico")) { }
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe ApplicationController, type: :controller do
       post "anonymous/create"  => "anonymous#create"
       put  "anonymous/update"  => "anonymous#update"
       delete "anonymous/destroy" => "anonymous#destroy"
-      get  "anonymous/edit"    => "anonymous#edit"
+      get "anonymous/edit"    => "anonymous#edit"
     end
   end
 
@@ -63,7 +63,7 @@ RSpec.describe ApplicationController, type: :controller do
       it "renderiza com status unprocessable_entity" do
         put :update, format: :json
         expect(response.status).to eq(422)
-        expect(JSON.parse(response.body)["errors"]).to eq({ "name" => ["inválido"] })
+        expect(JSON.parse(response.body)["errors"]).to eq({ "name" => [ "inválido" ] })
       end
     end
 

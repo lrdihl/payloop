@@ -11,7 +11,7 @@ module Identity
       VALID_ROLES = User.roles.keys.freeze
 
       def call(user:, role:)
-        return Failure({ type: :validation, errors: { role: ["papel inválido"] } }) \
+        return Failure({ type: :validation, errors: { role: [ "papel inválido" ] } }) \
           unless VALID_ROLES.include?(role.to_s)
 
         if user.update(role: role)
