@@ -21,6 +21,12 @@ gem "solid_cable"
 
 gem "vite_rails"
 gem "devise"
+
+# Domain / Dry
+gem "dry-validation"
+gem "dry-monads"
+gem "dry-transaction"
+
 # Para DDD e Serialização (Substitutos do Jbuilder)
 gem "alba" # ou blueprinter
 
