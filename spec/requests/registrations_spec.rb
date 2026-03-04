@@ -19,7 +19,14 @@ RSpec.describe "Registrations", type: :request do
 
   describe "GET /users/cadastro" do
     it "retorna 200" do
-      get new_user_registration_path
+      begin
+        get new_user_registration_path
+      rescue => e
+        puts "EXCEPTION: #{e.class}: #{e.message}"
+        puts e.backtrace.first(10).join("\n")
+      end
+      puts "STATUS: #{response.status}"
+      puts "BODY: #{response.body}"
       expect(response).to have_http_status(:ok)
     end
   end
@@ -55,7 +62,7 @@ RSpec.describe "Registrations", type: :request do
       it "retorna 422" do
         invalid = valid_params.deep_merge(user: { email: "nao-é-email" })
         post user_registration_path, params: invalid
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

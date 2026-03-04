@@ -1,3 +1,5 @@
+ENV['RAILS_ENV'] = 'test'
+
 require 'simplecov'
 SimpleCov.start 'rails' do
   minimum_coverage 90
@@ -14,7 +16,7 @@ end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -61,6 +63,10 @@ RSpec.configure do |config|
 
   config.use_transactional_fixtures = true
   config.filter_rails_from_backtrace!
+
+  config.before(:each, type: :request) do
+    ActionController::Base.allow_forgery_protection = false
+  end
 end
 
 Shoulda::Matchers.configure do |config|
