@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: "registrations" }
+  devise_for :users, controllers: {
+    registrations: "registrations",
+    sessions: "sessions"
+  }
 
   get "up" => "rails/health#show", as: :rails_health_check
 
@@ -7,6 +10,17 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  root to: "home#index"
+
+  # Área do administrador
+  namespace :admin do
+    resources :users do
+      member do
+        patch :update_role
+      end
+    end
+    # Futuros: plans, subscriptions, billing_reports
+    root to: "dashboard#index"
+  end
+
 end

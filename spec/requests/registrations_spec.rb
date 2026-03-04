@@ -17,17 +17,35 @@ RSpec.describe "Registrations", type: :request do
     }
   end
 
-  describe "GET /users/cadastro" do
+  describe "GET /users/sign_up" do
+    before { get new_user_registration_path }
+
     it "retorna 200" do
-      begin
-        get new_user_registration_path
-      rescue => e
-        puts "EXCEPTION: #{e.class}: #{e.message}"
-        puts e.backtrace.first(10).join("\n")
-      end
-      puts "STATUS: #{response.status}"
-      puts "BODY: #{response.body}"
       expect(response).to have_http_status(:ok)
+    end
+
+    it "exibe campo de e-mail" do
+      expect(response.body).to include('type="email"')
+    end
+
+    it "exibe campo de senha" do
+      expect(response.body).to include('type="password"')
+    end
+
+    it "exibe campo de nome completo" do
+      expect(response.body).to include("full_name")
+    end
+
+    it "exibe campo de CPF" do
+      expect(response.body).to include("document")
+    end
+
+    it "exibe campo de telefone" do
+      expect(response.body).to include("phone")
+    end
+
+    it "usa o layout auth" do
+      expect(response.body).to include("login-box")
     end
   end
 

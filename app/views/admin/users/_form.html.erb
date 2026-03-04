@@ -1,0 +1,35 @@
+<%= render "shared/errors", errors: @errors %>
+
+<% is_new = local_assigns.fetch(:new_record, @user.new_record?) %>
+
+<% if is_new %>
+  <div class="mb-3">
+    <%= f.label :email, "E-mail", class: "form-label" %>
+    <%= f.email_field :email, class: "form-control", placeholder: "usuario@exemplo.com" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :password, "Senha", class: "form-label" %>
+    <%= f.password_field :password, class: "form-control", placeholder: "Mínimo 6 caracteres" %>
+  </div>
+<% end %>
+
+<hr class="my-3">
+<p class="text-muted small">Dados do perfil</p>
+
+<%= f.fields_for :profile_attributes, @user.profile || Profile.new do |pf| %>
+  <div class="mb-3">
+    <%= pf.label :full_name, "Nome completo", class: "form-label" %>
+    <%= pf.text_field :full_name, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= pf.label :document, "CPF", class: "form-label" %>
+    <%= pf.text_field :document, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= pf.label :phone, "Telefone", class: "form-label" %>
+    <%= pf.text_field :phone, class: "form-control" %>
+  </div>
+<% end %>

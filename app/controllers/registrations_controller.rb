@@ -2,6 +2,8 @@
 class RegistrationsController < Devise::RegistrationsController
   include Dry::Monads[:result]
 
+  layout "auth"
+
   skip_before_action :authenticate_user!, only: %i[new create]
 
   def new

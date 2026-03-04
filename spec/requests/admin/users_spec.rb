@@ -8,9 +8,20 @@ RSpec.describe "Admin::Users", type: :request do
   before { sign_in admin }
 
   describe "GET /admin/users" do
+    before { get admin_users_path }
+
     it "retorna 200 para admin" do
-      get admin_users_path
       expect(response).to have_http_status(:ok)
+    end
+
+    it "usa o layout admin" do
+      expect(response.body).to include("app-wrapper")
+    end
+
+    it "exibe tabela de usuários" do
+      consumer # ensure consumer exists
+      get admin_users_path
+      expect(response.body).to include(consumer.email)
     end
 
     context "quando consumer tenta acessar" do
@@ -24,16 +35,49 @@ RSpec.describe "Admin::Users", type: :request do
   end
 
   describe "GET /admin/users/:id" do
+    before { get admin_user_path(consumer) }
+
     it "retorna 200" do
-      get admin_user_path(consumer)
       expect(response).to have_http_status(:ok)
+    end
+
+    it "exibe e-mail do usuário" do
+      expect(response.body).to include(consumer.email)
+    end
+
+    it "exibe formulário de update_role" do
+      expect(response.body).to include("update_role")
     end
   end
 
   describe "GET /admin/users/:id/edit" do
+    before { get edit_admin_user_path(consumer) }
+
     it "retorna 200" do
-      get edit_admin_user_path(consumer)
       expect(response).to have_http_status(:ok)
+    end
+
+    it "exibe campos de perfil no formulário" do
+      expect(response.body).to include("full_name")
+      expect(response.body).to include("document")
+      expect(response.body).to include("phone")
+    end
+  end
+
+  describe "GET /admin/users/new" do
+    before { get new_admin_user_path }
+
+    it "retorna 200" do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "exibe campos de e-mail e senha" do
+      expect(response.body).to include('type="email"')
+      expect(response.body).to include('type="password"')
+    end
+
+    it "exibe campos de perfil" do
+      expect(response.body).to include("full_name")
     end
   end
 
@@ -43,25 +87,27 @@ RSpec.describe "Admin::Users", type: :request do
         user: {
           profile_attributes: {
             full_name: "Nome Editado",
-            document:  consumer.profile.document,
-            phone:     "47900000000"
+            document: consumer.profile.document,
+            phone: "47900000000"
           }
         }
       }
     end
 
     it "atualiza o perfil e redireciona" do
-      patch admin_user_path(consumer), params:
+      patch admin_user_path(consumer), params: params
       expect(response).to redirect_to(admin_user_path(consumer))
     end
 
     it "persiste a alteração" do
-      patch admin_user_path(consumer), params:
+      patch admin_user_path(consumer), params: params
       expect(consumer.profile.reload.full_name).to eq("Nome Editado")
     end
   end
 
   describe "DELETE /admin/users/:id" do
+    before { consumer } # força criação antes da contagem
+
     it "remove o usuário e redireciona" do
       delete admin_user_path(consumer)
       expect(response).to redirect_to(admin_users_path)
