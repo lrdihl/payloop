@@ -1,4 +1,4 @@
-#
+# app/policies/application_policy.rb
 # Política base do Pundit.
 # Por padrão, NADA é permitido — toda permissão é opt-in explícito nas subclasses.
 # Isso segue o princípio de menor privilégio: melhor negar tudo e liberar o necessário
