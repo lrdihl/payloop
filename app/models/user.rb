@@ -20,7 +20,7 @@ class User < ApplicationRecord
          :lockable,
          :trackable
 
-  enum :role, { consumer: 0, admin: 1 }, default: :consumer
+  enum :role, { customer: 0, admin: 1 }, default: :customer
 
   has_one :profile, dependent: :destroy
 
@@ -32,7 +32,7 @@ class User < ApplicationRecord
     role == "admin"
   end
 
-  def consumer?
-    role == "consumer"
+  def customer?
+    role == "customer"
   end
 end
