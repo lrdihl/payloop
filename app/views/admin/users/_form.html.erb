@@ -16,7 +16,7 @@
   <div class="mb-3">
     <%= f.label :role, "Tipo de usuário", class: "form-label" %>
     <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] },
-                 { selected: "consumer" }, class: "form-select" %>
+                 { selected: "customer" }, class: "form-select" %>
   </div>
 <% end %>
 

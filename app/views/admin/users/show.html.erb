@@ -49,7 +49,7 @@
             <div class="mb-3">
               <%= f.label :role, "Novo papel", class: "form-label" %>
               <%= f.select :role,
-                    [["Consumer", "consumer"], ["Admin", "admin"]],
+                    [["Customer", "customer"], ["Admin", "admin"]],
                     { selected: @user.role },
                     class: "form-select" %>
             </div>
