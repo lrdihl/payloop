@@ -21,19 +21,20 @@ module Shared
       def to_s
         ActionController::Base.helpers.number_to_currency(
           cents / 100.0,
-          unit: currency_symbol,
-          separator: ",",
-          delimiter: "."
+          **format_options
         )
       end
 
       private
 
-      def currency_symbol
+      def format_options
         case currency
-        when "BRL" then "R$"
-        when "USD" then "$"
-        else currency
+        when "BRL"
+          { unit: "R$", separator: ",", delimiter: ".", format: "%u %n" }
+        when "USD"
+          { unit: "$", separator: ".", delimiter: ",", format: "%u %n" }
+        else
+          { unit: currency, separator: ".", delimiter: ",", format: "%u %n" }
         end
       end
     end
