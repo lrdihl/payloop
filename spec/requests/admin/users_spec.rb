@@ -3,7 +3,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::Users", type: :request do
   let(:admin)    { create(:user, :admin) }
-  let(:consumer) { create(:consumer_with_profile) }
+  let(:customer) { create(:customer_with_profile) }
 
   before { sign_in admin }
 
@@ -19,13 +19,13 @@ RSpec.describe "Admin::Users", type: :request do
     end
 
     it "exibe tabela de usuários" do
-      consumer # ensure consumer exists
+      customer # ensure customer exists
       get admin_users_path
-      expect(response.body).to include(consumer.email)
+      expect(response.body).to include(customer.email)
     end
 
-    context "quando consumer tenta acessar" do
-      before { sign_in consumer }
+    context "quando customer tenta acessar" do
+      before { sign_in customer }
 
       it "redireciona com alerta" do
         get admin_users_path
@@ -35,14 +35,14 @@ RSpec.describe "Admin::Users", type: :request do
   end
 
   describe "GET /admin/users/:id" do
-    before { get admin_user_path(consumer) }
+    before { get admin_user_path(customer) }
 
     it "retorna 200" do
       expect(response).to have_http_status(:ok)
     end
 
     it "exibe e-mail do usuário" do
-      expect(response.body).to include(consumer.email)
+      expect(response.body).to include(customer.email)
     end
 
     it "exibe formulário de update_role" do
@@ -51,7 +51,7 @@ RSpec.describe "Admin::Users", type: :request do
   end
 
   describe "GET /admin/users/:id/edit" do
-    before { get edit_admin_user_path(consumer) }
+    before { get edit_admin_user_path(customer) }
 
     it "retorna 200" do
       expect(response).to have_http_status(:ok)
@@ -91,7 +91,7 @@ RSpec.describe "Admin::Users", type: :request do
         user: {
           email:    "novo@exemplo.com",
           password: "senha@123",
-          role:     "consumer",
+          role:     "customer",
           profile_attributes: {
             full_name: "Novo Usuário",
             document:  "12345678901",
@@ -101,10 +101,10 @@ RSpec.describe "Admin::Users", type: :request do
       }
     end
 
-    it "cria usuário consumer por padrão e redireciona" do
+    it "cria usuário customer por padrão e redireciona" do
       post admin_users_path, params: base_params
       user = User.find_by(email: "novo@exemplo.com")
-      expect(user.role).to eq("consumer")
+      expect(user.role).to eq("customer")
       expect(response).to have_http_status(:redirect)
     end
 
@@ -121,7 +121,7 @@ RSpec.describe "Admin::Users", type: :request do
         user: {
           profile_attributes: {
             full_name: "Nome Editado",
-            document: consumer.profile.document,
+            document: customer.profile.document,
             phone: "47900000000"
           }
         }
@@ -129,44 +129,44 @@ RSpec.describe "Admin::Users", type: :request do
     end
 
     it "atualiza o perfil e redireciona" do
-      patch admin_user_path(consumer), params: params
-      expect(response).to redirect_to(admin_user_path(consumer))
+      patch admin_user_path(customer), params: params
+      expect(response).to redirect_to(admin_user_path(customer))
     end
 
     it "persiste a alteração" do
-      patch admin_user_path(consumer), params: params
-      expect(consumer.profile.reload.full_name).to eq("Nome Editado")
+      patch admin_user_path(customer), params: params
+      expect(customer.profile.reload.full_name).to eq("Nome Editado")
     end
   end
 
   describe "DELETE /admin/users/:id" do
-    before { consumer } # força criação antes da contagem
+    before { customer } # força criação antes da contagem
 
     it "remove o usuário e redireciona" do
-      delete admin_user_path(consumer)
+      delete admin_user_path(customer)
       expect(response).to redirect_to(admin_users_path)
     end
 
     it "diminui o count de usuários" do
       expect {
-        delete admin_user_path(consumer)
+        delete admin_user_path(customer)
       }.to change(User, :count).by(-1)
     end
   end
 
   describe "PATCH /admin/users/:id/role" do
     it "atualiza o role e redireciona" do
-      patch update_role_admin_user_path(consumer), params: { role: "admin" }
-      expect(response).to redirect_to(admin_user_path(consumer))
+      patch update_role_admin_user_path(customer), params: { role: "admin" }
+      expect(response).to redirect_to(admin_user_path(customer))
     end
 
     it "persiste o novo role" do
-      patch update_role_admin_user_path(consumer), params: { role: "admin" }
-      expect(consumer.reload.role).to eq("admin")
+      patch update_role_admin_user_path(customer), params: { role: "admin" }
+      expect(customer.reload.role).to eq("admin")
     end
 
     it "não permite admin alterar o próprio role" do
-      patch update_role_admin_user_path(admin), params: { role: "consumer" }
+      patch update_role_admin_user_path(admin), params: { role: "customer" }
       expect(response).to have_http_status(:redirect)
       expect(admin.reload.role).to eq("admin")
     end
