@@ -47,9 +47,18 @@ RSpec.describe Shared::Values::Money do
   end
 
   describe "#to_s" do
-    it "formata o valor como moeda" do
-      expect(money.to_s).to be_a(String)
-      expect(money.to_s).not_to be_empty
+    context "BRL" do
+      it "formata com símbolo R$, vírgula decimal e ponto milhar" do
+        m = described_class.new(cents: 999_999_999, currency: "BRL")
+        expect(m.to_s).to eq("R$ 9.999.999,99")
+      end
+    end
+
+    context "USD" do
+      it "formata com símbolo $, ponto decimal e vírgula milhar" do
+        m = described_class.new(cents: 999_999_999, currency: "USD")
+        expect(m.to_s).to eq("$ 9,999,999.99")
+      end
     end
   end
 
