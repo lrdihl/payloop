@@ -14,7 +14,7 @@ class UserPolicy < ApplicationPolicy
     user.admin?
   end
 
-  # Ver detalhes: admin vê qualquer um, consumer só vê a si mesmo
+  # Ver detalhes: admin vê qualquer um, customer só vê a si mesmo
   def show?
     user.admin? || own_record?
   end
@@ -24,7 +24,7 @@ class UserPolicy < ApplicationPolicy
     user.admin?
   end
 
-  # Edição: admin edita qualquer um, consumer edita apenas o próprio perfil
+  # Edição: admin edita qualquer um, customer edita apenas o próprio perfil
   def update?
     user.admin? || own_record?
   end
@@ -40,7 +40,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   class Scope < ApplicationPolicy::Scope
-    # Admin vê todos os usuários; consumer só vê a si mesmo
+    # Admin vê todos os usuários; customer só vê a si mesmo
     def resolve
       if user.admin?
         scope.all

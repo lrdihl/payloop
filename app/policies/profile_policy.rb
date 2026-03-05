@@ -9,12 +9,12 @@ class ProfilePolicy < ApplicationPolicy
     user.admin?
   end
 
-  # Admin vê qualquer perfil; consumer vê apenas o seu
+  # Admin vê qualquer perfil; customer vê apenas o seu
   def show?
     user.admin? || own_profile?
   end
 
-  # Admin edita qualquer perfil; consumer edita apenas o seu
+  # Admin edita qualquer perfil; customer edita apenas o seu
   def update?
     user.admin? || own_profile?
   end

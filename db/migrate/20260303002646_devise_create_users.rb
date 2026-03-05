@@ -9,7 +9,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[8.1]
       t.string :encrypted_password, null: false, default: ""
 
       ## Role
-      t.integer :role, null: false, default: 0  # enum: consumer(0), admin(1)
+      t.integer :role, null: false, default: 0  # enum: customer(0), admin(1)
 
       ## Recoverable
       t.string   :reset_password_token
