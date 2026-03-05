@@ -1,8 +1,13 @@
 class Plan < ApplicationRecord
   include Discard::Model
 
-  CURRENCIES = %w[BRL USD].freeze
+  CURRENCIES     = %w[BRL USD].freeze
   INTERVAL_TYPES = %w[month year].freeze
+
+  composed_of :price,
+    class_name: "Shared::Values::Money",
+    mapping: [%w[price_cents cents], %w[currency currency]],
+    constructor: ->(cents, currency) { Shared::Values::Money.new(cents: cents, currency: currency) }
 
   validates :name,           presence: true
   validates :price_cents,    presence: true, numericality: { only_integer: true, greater_than: 0 }
