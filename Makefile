@@ -31,6 +31,7 @@ db_reset:
 
 clean:
 	$(COMPOSE_CMD) down --rmi local --volumes --remove-orphans
+	rm -f storage/*.sqlite3
 
 deps:
 	${EXEC} bundle install
