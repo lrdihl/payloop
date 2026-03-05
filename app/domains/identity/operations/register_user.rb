@@ -21,13 +21,13 @@ module Identity
       end
 
       # Step 2: Persiste as credenciais via ActiveRecord/Devise
-      # Role padrão é :consumer; admin pode informar outro role ao criar via painel
+      # Role padrão é :customer; admin pode informar outro role ao criar via painel
       def create_user(input)
         user = User.new(
           email:                 input[:email],
           password:              input[:password],
           password_confirmation: input[:password_confirmation],
-          role:                  input.fetch(:role, :consumer)
+          role:                  input.fetch(:role, :customer)
         )
 
         if user.save
