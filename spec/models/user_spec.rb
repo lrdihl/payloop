@@ -15,7 +15,7 @@ RSpec.describe User, type: :model do
   end
 
   describe "enums" do
-    it { is_expected.to define_enum_for(:role).with_values(consumer: 0, admin: 1) }
+    it { is_expected.to define_enum_for(:role).with_values(customer: 0, admin: 1) }
   end
 
   describe "#admin?" do
@@ -24,23 +24,23 @@ RSpec.describe User, type: :model do
       expect(user.admin?).to be true
     end
 
-    it "retorna false para consumidores" do
-      user = build(:user, :consumer)
+    it "retorna false para customers" do
+      user = build(:user, :customer)
       expect(user.admin?).to be false
     end
   end
 
-  describe "#consumer?" do
-    it "retorna true para consumidores" do
-      user = build(:user, :consumer)
-      expect(user.consumer?).to be true
+  describe "#customer?" do
+    it "retorna true para customers" do
+      user = build(:user, :customer)
+      expect(user.customer?).to be true
     end
   end
 
   describe "role padrão" do
-    it "cria usuários como consumer por padrão" do
+    it "cria usuários como customer por padrão" do
       user = create(:user)
-      expect(user.role).to eq("consumer")
+      expect(user.role).to eq("customer")
     end
   end
 
