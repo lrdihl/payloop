@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <% unless @user == current_user %>
+  <% if policy(@user).update_role? %>
     <div class="col-md-6">
       <div class="card">
         <div class="card-header">
@@ -60,3 +60,4 @@
     </div>
   <% end %>
 </div>
+
