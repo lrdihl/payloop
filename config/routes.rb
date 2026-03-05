@@ -22,5 +22,4 @@ Rails.application.routes.draw do
     # Futuros: plans, subscriptions, billing_reports
     root to: "dashboard#index"
   end
-
 end
