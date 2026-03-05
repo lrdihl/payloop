@@ -7,6 +7,8 @@
 module Identity
   module Contracts
     class RegisterContract < Dry::Validation::Contract
+      VALID_ROLES = %w[consumer admin].freeze
+
       params do
         required(:email).filled(:string)
         required(:password).filled(:string)
@@ -14,6 +16,7 @@ module Identity
         required(:full_name).filled(:string)
         required(:document).filled(:string)
         optional(:phone).maybe(:string)
+        optional(:role).maybe(:string)
       end
 
       rule(:email) do
@@ -33,6 +36,11 @@ module Identity
 
       rule(:full_name) do
         key.failure("deve ter no mínimo 3 caracteres") if value.strip.length < 3
+      end
+
+      rule(:role) do
+        next if value.nil?
+        key.failure("deve ser consumer ou admin") unless VALID_ROLES.include?(value)
       end
 
       rule(:document) do
