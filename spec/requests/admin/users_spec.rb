@@ -79,6 +79,40 @@ RSpec.describe "Admin::Users", type: :request do
     it "exibe campos de perfil" do
       expect(response.body).to include("full_name")
     end
+
+    it "exibe campo de seleção de role" do
+      expect(response.body).to include('name="user[role]"')
+    end
+  end
+
+  describe "POST /admin/users" do
+    let(:base_params) do
+      {
+        user: {
+          email:    "novo@exemplo.com",
+          password: "senha@123",
+          role:     "consumer",
+          profile_attributes: {
+            full_name: "Novo Usuário",
+            document:  "12345678901",
+            phone:     "47999999999"
+          }
+        }
+      }
+    end
+
+    it "cria usuário consumer por padrão e redireciona" do
+      post admin_users_path, params: base_params
+      user = User.find_by(email: "novo@exemplo.com")
+      expect(user.role).to eq("consumer")
+      expect(response).to have_http_status(:redirect)
+    end
+
+    it "cria usuário admin quando role: admin é informado" do
+      post admin_users_path, params: base_params.deep_merge(user: { role: "admin" })
+      user = User.find_by(email: "novo@exemplo.com")
+      expect(user.role).to eq("admin")
+    end
   end
 
   describe "PATCH /admin/users/:id" do
