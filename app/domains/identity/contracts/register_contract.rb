@@ -7,7 +7,7 @@
 module Identity
   module Contracts
     class RegisterContract < Dry::Validation::Contract
-      VALID_ROLES = %w[consumer admin].freeze
+      VALID_ROLES = %w[customer admin].freeze
 
       params do
         required(:email).filled(:string)
@@ -40,7 +40,7 @@ module Identity
 
       rule(:role) do
         next if value.nil?
-        key.failure("deve ser consumer ou admin") unless VALID_ROLES.include?(value)
+        key.failure("deve ser customer ou admin") unless VALID_ROLES.include?(value)
       end
 
       rule(:document) do
