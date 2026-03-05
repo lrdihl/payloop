@@ -25,6 +25,22 @@ RSpec.describe Plan, type: :model do
     it { is_expected.to validate_inclusion_of(:interval_type).in_array(%w[month year]) }
   end
 
+  describe "value object price" do
+    let(:plan) { described_class.new(price_cents: 1990, currency: "BRL") }
+
+    it "plan.price retorna um Money" do
+      expect(plan.price).to be_a(Shared::Values::Money)
+    end
+
+    it "plan.price.cents reflete price_cents" do
+      expect(plan.price.cents).to eq(1990)
+    end
+
+    it "plan.price.currency reflete currency" do
+      expect(plan.price.currency).to eq("BRL")
+    end
+  end
+
   describe "escopos" do
     let!(:plano_ativo)   { create(:plan, active: true) }
     let!(:plano_inativo) { create(:plan, active: false) }
