@@ -167,6 +167,27 @@ RSpec.describe "Admin::Users", type: :request do
     end
   end
 
+  describe "ações restritas para customer" do
+    let(:outro_usuario) { create(:user, :admin) }
+
+    before { sign_in customer }
+
+    it "GET /admin/users/new → redireciona com alerta" do
+      get new_admin_user_path
+      expect(response).to have_http_status(:redirect)
+    end
+
+    it "GET /admin/users/:outro_id → redireciona com alerta" do
+      get admin_user_path(outro_usuario)
+      expect(response).to have_http_status(:redirect)
+    end
+
+    it "DELETE /admin/users/:id → redireciona com alerta" do
+      delete admin_user_path(outro_usuario)
+      expect(response).to have_http_status(:redirect)
+    end
+  end
+
   describe "PATCH /admin/users/:id/role" do
     it "atualiza o role e redireciona" do
       patch update_role_admin_user_path(customer), params: { role: "admin" }
