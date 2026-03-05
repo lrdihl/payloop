@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_014826) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_021514) do
+  create_table "plans", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "currency", default: "BRL", null: false
+    t.text "description"
+    t.datetime "discarded_at"
+    t.integer "interval_count", default: 1, null: false
+    t.string "interval_type", default: "month", null: false
+    t.string "name", null: false
+    t.integer "price_cents", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discarded_at"], name: "index_plans_on_discarded_at"
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "document", null: false
