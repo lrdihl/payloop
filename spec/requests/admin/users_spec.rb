@@ -24,12 +24,25 @@ RSpec.describe "Admin::Users", type: :request do
       expect(response.body).to include(customer.email)
     end
 
-    context "quando customer tenta acessar" do
-      before { sign_in customer }
+    context "quando customer acessa o index" do
+      let(:outro_usuario) { create(:user, :admin) }
 
-      it "redireciona com alerta" do
+      before do
+        sign_in customer
+        outro_usuario # garante que existe no banco
         get admin_users_path
-        expect(response).to have_http_status(:redirect)
+      end
+
+      it "retorna 200" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "exibe o próprio e-mail" do
+        expect(response.body).to include(customer.email)
+      end
+
+      it "não exibe e-mail de outro usuário" do
+        expect(response.body).not_to include(outro_usuario.email)
       end
     end
   end
