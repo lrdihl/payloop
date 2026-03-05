@@ -33,6 +33,9 @@ gem "dry-transaction"
 # Para DDD e Serialização (Substitutos do Jbuilder)
 gem "alba" # ou blueprinter
 
+# Soft delete
+gem "discard"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
