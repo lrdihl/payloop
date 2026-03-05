@@ -19,7 +19,8 @@ Rails.application.routes.draw do
         patch :update_role
       end
     end
-    # Futuros: plans, subscriptions, billing_reports
+    resources :plans
+    # Futuros: subscriptions, billing_reports
     root to: "dashboard#index"
   end
 end
