@@ -31,7 +31,7 @@ module Admin
       authorize User
 
       result = Identity::Operations::RegisterUser.new.call(
-        user_params.merge(password_confirmation: user_params[:password])
+        user_params.merge(password_confirmation: user_params[:password]).merge(profile_params)
       )
 
       handle_result(result) do |profile|
@@ -83,7 +83,7 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:email, :password).to_h.deep_symbolize_keys
+      params.require(:user).permit(:email, :password, :role).to_h.deep_symbolize_keys
     end
 
     def profile_params
