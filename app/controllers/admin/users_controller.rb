@@ -10,7 +10,6 @@ module Admin
 
     layout "admin"
 
-    before_action :require_admin!
     before_action :set_user, only: %i[show edit update destroy update_role]
 
     def index
@@ -92,10 +91,6 @@ module Admin
             .permit(:full_name, :document, :phone)
             .to_h
             .deep_symbolize_keys
-    end
-
-    def require_admin!
-      redirect_to new_user_session_path, alert: "Acesso restrito." unless current_user.admin?
     end
 
     def action_for_failure
