@@ -88,8 +88,8 @@ RSpec.describe Identity::Contracts::RegisterContract do
       expect(result).to be_success
     end
 
-    it "aceita 'consumer'" do
-      result = contract.call(valid_input.merge(role: "consumer"))
+    it "aceita 'customer'" do
+      result = contract.call(valid_input.merge(role: "customer"))
       expect(result).to be_success
     end
 
@@ -100,7 +100,7 @@ RSpec.describe Identity::Contracts::RegisterContract do
 
     it "rejeita role inválido" do
       result = contract.call(valid_input.merge(role: "superuser"))
-      expect(result.errors[:role]).to include("deve ser consumer ou admin")
+      expect(result.errors[:role]).to include("deve ser customer ou admin")
     end
   end
 end
