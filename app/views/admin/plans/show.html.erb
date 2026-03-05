@@ -1,0 +1,36 @@
+<% content_for :page_title, "Plano ##{@plan.id}" %>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title"><%= @plan.name %></h3>
+    <div class="card-tools">
+      <%= link_to "Editar", edit_admin_plan_path(@plan), class: "btn btn-sm btn-warning" %>
+      <%= link_to "Voltar", admin_plans_path, class: "btn btn-sm btn-secondary" %>
+    </div>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-4">ID</dt>
+      <dd class="col-sm-8"><%= @plan.id %></dd>
+
+      <dt class="col-sm-4">Nome</dt>
+      <dd class="col-sm-8"><%= @plan.name %></dd>
+
+      <dt class="col-sm-4">Descrição</dt>
+      <dd class="col-sm-8"><%= @plan.description || "—" %></dd>
+
+      <dt class="col-sm-4">Preço</dt>
+      <dd class="col-sm-8"><%= number_to_currency(@plan.price_cents / 100.0, unit: @plan.currency == "BRL" ? "R$" : "$") %></dd>
+
+      <dt class="col-sm-4">Recorrência</dt>
+      <dd class="col-sm-8"><%= @plan.interval_count %>x <%= @plan.interval_type %></dd>
+
+      <dt class="col-sm-4">Status</dt>
+      <dd class="col-sm-8">
+        <span class="badge bg-<%= @plan.active? ? 'success' : 'secondary' %>">
+          <%= @plan.active? ? "Ativo" : "Inativo" %>
+        </span>
+      </dd>
+    </dl>
+  </div>
+</div>

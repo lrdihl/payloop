@@ -1,0 +1,44 @@
+<% content_for :page_title, "Planos" %>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="card-title">Lista de Planos</h3>
+    <%= link_to "Novo Plano", new_admin_plan_path, class: "btn btn-primary btn-sm" %>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Preço</th>
+          <th>Recorrência</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @plans.each do |plan| %>
+          <tr>
+            <td><%= plan.id %></td>
+            <td><%= plan.name %></td>
+            <td><%= number_to_currency(plan.price_cents / 100.0, unit: plan.currency == "BRL" ? "R$" : "$") %></td>
+            <td><%= plan.interval_count %>x <%= plan.interval_type %></td>
+            <td>
+              <span class="badge bg-<%= plan.active? ? 'success' : 'secondary' %>">
+                <%= plan.active? ? "Ativo" : "Inativo" %>
+              </span>
+            </td>
+            <td>
+              <%= link_to "Ver", admin_plan_path(plan), class: "btn btn-sm btn-outline-info" %>
+              <%= link_to "Editar", edit_admin_plan_path(plan), class: "btn btn-sm btn-outline-warning" %>
+              <%= button_to "Remover", admin_plan_path(plan), method: :delete,
+                    class: "btn btn-sm btn-outline-danger",
+                    data: { turbo_confirm: "Confirmar remoção?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
