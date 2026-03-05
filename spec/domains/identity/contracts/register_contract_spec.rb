@@ -81,4 +81,26 @@ RSpec.describe Identity::Contracts::RegisterContract do
       expect(result).to be_success
     end
   end
+
+  describe "role" do
+    it "é opcional — sem role retorna sucesso" do
+      result = contract.call(valid_input.except(:role))
+      expect(result).to be_success
+    end
+
+    it "aceita 'consumer'" do
+      result = contract.call(valid_input.merge(role: "consumer"))
+      expect(result).to be_success
+    end
+
+    it "aceita 'admin'" do
+      result = contract.call(valid_input.merge(role: "admin"))
+      expect(result).to be_success
+    end
+
+    it "rejeita role inválido" do
+      result = contract.call(valid_input.merge(role: "superuser"))
+      expect(result.errors[:role]).to include("deve ser consumer ou admin")
+    end
+  end
 end
