@@ -20,7 +20,16 @@ gem "solid_queue"
 gem "solid_cable"
 
 gem "vite_rails"
+
+# Auth
 gem "devise"
+gem "pundit"
+
+# Domain / Dry
+gem "dry-validation"
+gem "dry-monads"
+gem "dry-transaction"
+
 # Para DDD e Serialização (Substitutos do Jbuilder)
 gem "alba" # ou blueprinter
 
@@ -38,9 +47,11 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails"
+  gem "guard-rspec", require: false
   gem "factory_bot_rails"
   gem "faker"
   gem "simplecov", require: false
+  gem "shoulda-matchers"
 end
 
 group :development do

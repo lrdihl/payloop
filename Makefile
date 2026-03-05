@@ -70,3 +70,6 @@ ci:
 	echo "🔍 Rodando RSpec...\n" && \
 	$(EXEC) bundle exec rspec --format progress && \
 	echo "\n✅ RSpec OK"
+
+guardfile:
+	$(EXEC) bundle exec guard

@@ -9,7 +9,6 @@ on:
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -29,7 +28,6 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -44,7 +42,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     env:
       RAILS_ENV: test
@@ -80,7 +77,6 @@ jobs:
 
   dependency-review:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -90,11 +86,19 @@ jobs:
           fail-on-severity: critical
 
   deploy:
+    name: Deploy no Render
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
+    needs:
+      - scan_ruby
+      - lint
+      - test
+      - dependency-review
 
     steps:
-      - name: Deploy no Render
+      - name: Trigger Render Deploy Hook
         run: |
+          echo "🚀 Disparando deploy no Render..."
           curl -f -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
             -H "Content-Type: application/json"
+          echo "✅ Deploy acionado com sucesso!"

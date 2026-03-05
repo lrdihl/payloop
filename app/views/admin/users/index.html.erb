@@ -1,0 +1,48 @@
+<% content_for :page_title, "Usuários" %>
+
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="card-title">Lista de Usuários</h3>
+    <% if policy(User).create? %>
+      <%= link_to "Novo Usuário", new_admin_user_path, class: "btn btn-primary btn-sm" %>
+    <% end %>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>E-mail</th>
+          <th>Nome</th>
+          <th>Role</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user.id %></td>
+            <td><%= user.email %></td>
+            <td><%= user.full_name || "—" %></td>
+            <td>
+              <span class="badge bg-<%= user.admin? ? 'danger' : 'secondary' %>">
+                <%= user.role %>
+              </span>
+            </td>
+            <td>
+              <%= link_to "Ver", admin_user_path(user), class: "btn btn-sm btn-outline-info" %>
+              <% if policy(user).update? %>
+                <%= link_to "Editar", edit_admin_user_path(user), class: "btn btn-sm btn-outline-warning" %>
+              <% end %>
+              <% if policy(user).destroy? %>
+                <%= button_to "Remover", admin_user_path(user), method: :delete,
+                      class: "btn btn-sm btn-outline-danger",
+                      data: { turbo_confirm: "Confirmar remoção?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

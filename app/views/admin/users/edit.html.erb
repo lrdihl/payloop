@@ -1,0 +1,19 @@
+<% content_for :page_title, "Editar Usuário ##{@user.id}" %>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Editar Perfil</h3>
+    <div class="card-tools">
+      <%= link_to "Ver", admin_user_path(@user), class: "btn btn-sm btn-info" %>
+      <%= link_to "Voltar", admin_users_path, class: "btn btn-sm btn-secondary" %>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= form_with model: [:admin, @user], local: true do |f| %>
+      <%= render "form", f: f, new_record: false %>
+      <div class="mt-3">
+        <%= f.submit "Salvar Alterações", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

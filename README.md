@@ -95,6 +95,19 @@ A aplicação estará disponível em [http://localhost:3000](http://localhost:30
 
 ---
 
+## Usuários de desenvolvimento
+
+Após rodar `make setup` (ou `make db_seed`), os seguintes usuários já estão disponíveis:
+
+| Role | E-mail | Senha |
+|---|---|---|
+| Admin | `admin@payloop.dev` | `senha@123` |
+| Customer | `customer@payloop.dev` | `senha@123` |
+
+> O seed é idempotente — pode ser executado várias vezes sem duplicar registros.
+
+---
+
 ## Testes
 
 ```bash
