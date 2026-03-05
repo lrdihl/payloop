@@ -12,6 +12,12 @@
     <%= f.label :password, "Senha", class: "form-label" %>
     <%= f.password_field :password, class: "form-control", placeholder: "Mínimo 6 caracteres" %>
   </div>
+
+  <div class="mb-3">
+    <%= f.label :role, "Tipo de usuário", class: "form-label" %>
+    <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] },
+                 { selected: "consumer" }, class: "form-select" %>
+  </div>
 <% end %>
 
 <hr class="my-3">
