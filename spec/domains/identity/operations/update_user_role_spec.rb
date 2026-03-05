@@ -4,10 +4,10 @@ require "rails_helper"
 RSpec.describe Identity::Operations::UpdateUserRole do
   subject(:operation) { described_class.new }
 
-  let(:user) { create(:user, :consumer) }
+  let(:user) { create(:user, :customer) }
 
   # ─── Fluxo feliz ────────────────────────────────────────────────────────────
-  describe "promovendo consumer para admin" do
+  describe "promovendo customer para admin" do
     it "retorna Success com o user atualizado" do
       result = operation.call(user:, role: "admin")
       expect(result).to be_success
@@ -20,17 +20,17 @@ RSpec.describe Identity::Operations::UpdateUserRole do
     end
   end
 
-  describe "rebaixando admin para consumer" do
+  describe "rebaixando admin para customer" do
     let(:user) { create(:user, :admin) }
 
     it "retorna Success" do
-      result = operation.call(user:, role: "consumer")
+      result = operation.call(user:, role: "customer")
       expect(result).to be_success
     end
 
     it "persiste o novo role" do
-      operation.call(user:, role: "consumer")
-      expect(user.reload.role).to eq("consumer")
+      operation.call(user:, role: "customer")
+      expect(user.reload.role).to eq("customer")
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Identity::Operations::UpdateUserRole do
 
     it "não altera o role do usuário" do
       operation.call(user:, role: "invalido")
-      expect(user.reload.role).to eq("consumer")
+      expect(user.reload.role).to eq("customer")
     end
   end
 
