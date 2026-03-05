@@ -9,7 +9,6 @@ on:
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -29,7 +28,6 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -44,7 +42,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     env:
       RAILS_ENV: test
@@ -80,7 +77,6 @@ jobs:
 
   dependency-review:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
 
@@ -89,9 +85,10 @@ jobs:
         with:
           fail-on-severity: critical
 
-deploy:
+  deploy:
     name: Deploy no Render
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     needs:
       - scan_ruby
       - lint
