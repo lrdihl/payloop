@@ -23,11 +23,17 @@ RSpec.describe Identity::Operations::RegisterUser do
       expect(result.value!).to be_a(Profile)
     end
 
-    it "cria um User com role consumer" do
+    it "cria um User com role consumer por padrão" do
       operation.call(valid_params)
       user = User.find_by(email: valid_params[:email])
       expect(user).not_to be_nil
       expect(user.role).to eq("consumer")
+    end
+
+    it "cria um User com role admin quando informado" do
+      operation.call(valid_params.merge(role: "admin"))
+      user = User.find_by(email: valid_params[:email])
+      expect(user.role).to eq("admin")
     end
 
     it "cria um Profile vinculado ao User" do
