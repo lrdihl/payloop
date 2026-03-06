@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SharedPaymentMethods::Registry do
+RSpec.describe Shared::PaymentMethods::Registry do
   # Isola o Registry entre testes usando uma cópia limpa
   around do |example|
     original = described_class.instance_variable_get(:@methods).dup
