@@ -2,6 +2,8 @@
 require "rails_helper"
 
 RSpec.describe Subscription, type: :model do
+  include ActiveSupport::Testing::TimeHelpers
+
   describe "associações" do
     it { is_expected.to belong_to(:user) }
     it { is_expected.to belong_to(:plan) }
@@ -18,8 +20,6 @@ RSpec.describe Subscription, type: :model do
       )
     end
 
-    it { is_expected.to validate_presence_of(:user) }
-    it { is_expected.to validate_presence_of(:plan) }
     it { is_expected.to validate_presence_of(:joined_at) }
     it { is_expected.to validate_presence_of(:next_due_date) }
   end
