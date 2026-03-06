@@ -60,6 +60,46 @@ RSpec.describe Plan, type: :model do
     end
   end
 
+  describe "duration e renewable" do
+    subject do
+      described_class.new(
+        name: "Plano",
+        price_cents: 990,
+        currency: "BRL",
+        interval_count: 1,
+        interval_type: "month",
+        active: true,
+        duration_count: 12,
+        duration_type: "month",
+        renewable: false
+      )
+    end
+
+    it { is_expected.to validate_inclusion_of(:duration_type).in_array(%w[month year]).allow_nil }
+    it { is_expected.to validate_numericality_of(:duration_count).is_greater_than(0).only_integer.allow_nil }
+
+    it "permite duration nil/nil (vitalício)" do
+      plan = Plan.new(subject.attributes.merge("duration_count" => nil, "duration_type" => nil))
+      expect(plan).to be_valid
+    end
+
+    it "rejeita duration_count preenchido sem duration_type" do
+      plan = Plan.new(subject.attributes.merge("duration_type" => nil))
+      expect(plan).not_to be_valid
+      expect(plan.errors[:duration_type]).not_to be_empty
+    end
+
+    it "rejeita duration_type preenchido sem duration_count" do
+      plan = Plan.new(subject.attributes.merge("duration_count" => nil))
+      expect(plan).not_to be_valid
+      expect(plan.errors[:duration_count]).not_to be_empty
+    end
+
+    it "renewable é false por padrão" do
+      expect(Plan.new.renewable).to be false
+    end
+  end
+
   describe "soft delete (discard)" do
     let(:plan) { create(:plan) }
 
