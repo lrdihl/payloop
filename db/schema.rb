@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_224315) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
   create_table "plans", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -37,6 +37,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_224315) do
     t.integer "user_id", null: false
     t.index ["document"], name: "index_profiles_on_document", unique: true
     t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.date "canceled_at"
+    t.date "closed_at"
+    t.datetime "created_at", null: false
+    t.date "joined_at", null: false
+    t.date "next_due_date", null: false
+    t.integer "plan_id", null: false
+    t.string "status", default: "pending_payment", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["closed_at"], name: "index_subscriptions_on_closed_at"
+    t.index ["next_due_date"], name: "index_subscriptions_on_next_due_date"
+    t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
+    t.index ["status"], name: "index_subscriptions_on_status"
+    t.index ["user_id", "plan_id", "status"], name: "index_subscriptions_on_user_id_and_plan_id_and_status"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -67,4 +85,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_224315) do
   end
 
   add_foreign_key "profiles", "users"
+  add_foreign_key "subscriptions", "plans"
+  add_foreign_key "subscriptions", "users"
 end
