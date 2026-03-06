@@ -9,12 +9,12 @@ RSpec.describe PaymentMethod::CreditCard, type: :model do
 
   describe "#simulate" do
     it "retorna :success" do
-      expect(credit_card.simulate(amount_cents: 4990)).to eq(:success)
+      expect(credit_card.simulate(money: Shared::Values::Money.new(cents: 4990, currency: "BRL"))).to eq(:success)
     end
 
     it "loga no console" do
       expect(Rails.logger).to receive(:info).with(/Cartão de Crédito/)
-      credit_card.simulate(amount_cents: 4990)
+      credit_card.simulate(money: Shared::Values::Money.new(cents: 4990, currency: "BRL"))
     end
   end
 

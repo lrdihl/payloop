@@ -13,11 +13,11 @@ RSpec.describe PaymentMethod, type: :model do
     end
 
     it "#simulate levanta NotImplementedError" do
-      expect { pm.simulate(amount_cents: 100) }.to raise_error(NotImplementedError)
+      expect { pm.simulate(money: Shared::Values::Money.new(cents: 100, currency: "BRL")) }.to raise_error(NotImplementedError)
     end
 
     it "#process levanta NotImplementedError" do
-      expect { pm.process(amount_cents: 100) }.to raise_error(NotImplementedError)
+      expect { pm.process(money: Shared::Values::Money.new(cents: 100, currency: "BRL")) }.to raise_error(NotImplementedError)
     end
   end
 end
