@@ -17,10 +17,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_021514) do
     t.string "currency", default: "BRL", null: false
     t.text "description"
     t.datetime "discarded_at"
+    t.integer "duration_count"
+    t.string "duration_type"
     t.integer "interval_count", default: 1, null: false
     t.string "interval_type", default: "month", null: false
     t.string "name", null: false
     t.integer "price_cents", null: false
+    t.boolean "renewable", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_plans_on_discarded_at"
   end
