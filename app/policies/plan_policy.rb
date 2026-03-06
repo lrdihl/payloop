@@ -7,7 +7,7 @@ class PlanPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      user.admin? ? scope.all : scope.none
+      user.admin? ? scope.kept : scope.none
     end
   end
 end
