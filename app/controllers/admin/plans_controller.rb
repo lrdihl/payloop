@@ -63,7 +63,8 @@ module Admin
 
     def plan_params
       params.require(:plan)
-            .permit(:name, :description, :price_cents, :currency, :interval_count, :interval_type, :active)
+            .permit(:name, :description, :price_cents, :currency, :interval_count, :interval_type,
+                    :duration_count, :duration_type, :renewable, :active)
             .to_h
             .deep_symbolize_keys
     end
