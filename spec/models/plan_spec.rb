@@ -75,7 +75,11 @@ RSpec.describe Plan, type: :model do
       )
     end
 
-    it { is_expected.to validate_inclusion_of(:duration_type).in_array(%w[month year]).allow_nil }
+    it "rejeita duration_type com valor fora da lista" do
+      plan = Plan.new(subject.attributes.merge("duration_type" => "week"))
+      expect(plan).not_to be_valid
+      expect(plan.errors[:duration_type]).not_to be_empty
+    end
     it { is_expected.to validate_numericality_of(:duration_count).is_greater_than(0).only_integer.allow_nil }
 
     it "permite duration nil/nil (vitalício)" do
