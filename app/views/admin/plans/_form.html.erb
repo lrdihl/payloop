@@ -35,6 +35,25 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= label_tag :duration_count, "Duração (quantidade)", class: "form-label" %>
+      <%= number_field_tag "plan[duration_count]", @plan.duration_count, class: "form-control", min: 1, placeholder: "Deixe vazio para vitalício" %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= label_tag :duration_type, "Duração (tipo)", class: "form-label" %>
+      <%= select_tag "plan[duration_type]",
+            options_for_select([["— Vitalício —", ""]] + Plan::DURATION_TYPES.map { |t| [t.capitalize, t] }, @plan.duration_type),
+            class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="mb-3 form-check">
+    <%= check_box_tag "plan[renewable]", "1", @plan.renewable, class: "form-check-input" %>
+    <%= label_tag :renewable, "Renovável após término", class: "form-check-label" %>
+  </div>
+
   <div class="mb-3 form-check">
     <%= check_box_tag "plan[active]", "1", @plan.active, class: "form-check-input" %>
     <%= label_tag :active, "Ativo", class: "form-check-label" %>
