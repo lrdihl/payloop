@@ -2,9 +2,12 @@ module Shared
   module PaymentMethods
     class Registry
       @methods = {}
+      @status = {}
 
       def self.register(key, klass)
-        @methods[key.to_sym] = klass
+        key = key.to_sym
+        @methods[key] = klass
+        @status[key] = true
       end
 
       def self.find(key)
@@ -13,6 +16,22 @@ module Shared
 
       def self.all
         @methods.dup
+      end
+
+      def self.disable(key)
+        @status[key.to_sym] = false
+      end
+
+      def self.enable(key)
+        @status[key.to_sym] = true
+      end
+
+      def self.active?(key)
+        @status.fetch(key.to_sym, false)
+      end
+
+      def self.active_methods
+        @methods.select { |key, _| @status[key] }
       end
     end
   end
