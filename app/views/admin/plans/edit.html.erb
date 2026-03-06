@@ -1,0 +1,10 @@
+<% content_for :page_title, "Editar Plano" %>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Editar Plano</h3>
+  </div>
+  <div class="card-body">
+    <%= render "form", form_url: admin_plan_path(@plan), form_method: :patch %>
+  </div>
+</div>
