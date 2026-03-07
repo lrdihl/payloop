@@ -52,6 +52,7 @@ module Subscriptions
         )
 
         if subscription.save
+          Billing::Jobs::BillingJob.perform_later(subscription.id)
           Dry::Monads::Success(subscription)
         else
           Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
