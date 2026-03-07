@@ -1,6 +1,6 @@
 <% if local_assigns[:errors].present? %>
   <div class="alert alert-danger">
-    <h6 class="fw-bold mb-1">Por favor, corrija os erros abaixo:</h6>
+    <h6 class="fw-bold mb-1"><%= t("shared.errors.header") %></h6>
     <ul class="mb-0">
       <% errors.each do |field, messages| %>
         <% Array(messages).each do |msg| %>
