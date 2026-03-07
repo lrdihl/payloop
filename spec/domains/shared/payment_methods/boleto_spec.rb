@@ -8,15 +8,26 @@ RSpec.describe Shared::PaymentMethods::Boleto do
   end
 
   describe "#process" do
-    let(:money) { Shared::Values::Money.new(cents: 4990, currency: "BRL") }
+    let(:payment) { build(:payment) }
 
-    it "retorna :success" do
-      expect(boleto.process(money:)).to eq(:success)
+    it "retorna Success" do
+      result = boleto.process(payment:)
+      expect(result).to be_success
+    end
+
+    it "seta transaction_id no payment" do
+      boleto.process(payment:)
+      expect(payment.transaction_id).to be_present
+    end
+
+    it "seta gateway_response no payment" do
+      boleto.process(payment:)
+      expect(payment.gateway_response).to be_present
     end
 
     it "loga no console" do
       expect(Rails.logger).to receive(:info).with(/Boleto/)
-      boleto.process(money:)
+      boleto.process(payment:)
     end
   end
 
