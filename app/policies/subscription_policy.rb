@@ -1,12 +1,15 @@
 class SubscriptionPolicy < ApplicationPolicy
-  def index?    = user.admin? || user.customer?
-  def show?     = user.admin? || own?
-  def create?   = user.admin? || user.customer?
-  def cancel?   = user.admin? || own?
-  def activate? = user.admin?
-  def fail?     = user.admin?
-  def retry?    = user.admin?
-  def close?    = user.admin?
+  NON_TERMINAL_STATUSES = %w[pending_payment error_payment active].freeze
+
+  def index?                  = user.admin? || user.customer?
+  def show?                   = user.admin? || own?
+  def create?                 = user.admin? || user.customer?
+  def cancel?                 = user.admin? || own?
+  def activate?               = user.admin?
+  def fail?                   = user.admin?
+  def retry?                   = user.admin?
+  def close?                  = user.admin?
+  def update_payment_method?  = user.admin? || (own? && non_terminal?)
 
   class Scope < ApplicationPolicy::Scope
     def resolve
@@ -21,5 +24,9 @@ class SubscriptionPolicy < ApplicationPolicy
 
   def own?
     record.user == user
+  end
+
+  def non_terminal?
+    NON_TERMINAL_STATUSES.include?(record.status)
   end
 end
