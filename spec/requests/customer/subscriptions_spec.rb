@@ -78,7 +78,7 @@ RSpec.describe "Customer::Subscriptions", type: :request do
     context "com dados inválidos (sem plan_id)" do
       it "retorna 422" do
         post customer_subscriptions_path, params: { subscription: { plan_id: "" } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

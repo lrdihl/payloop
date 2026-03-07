@@ -74,7 +74,7 @@ RSpec.describe "Customer::Profile", type: :request do
     context "com dados inválidos" do
       it "retorna 422" do
         patch customer_profile_path, params: { profile: { full_name: "", document: "", phone: "" } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
