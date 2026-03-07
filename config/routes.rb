@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   end
 
   namespace :webhooks do
-    resources :gateway_callbacks, only: [:create]
+    resources :gateway_callbacks, only: [ :create ]
   end
 
   namespace :customer do

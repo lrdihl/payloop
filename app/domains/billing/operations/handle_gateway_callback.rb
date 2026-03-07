@@ -62,9 +62,9 @@ module Billing
         subscription = payment.subscription
 
         operation = case input[:status].to_s
-                    when "succeeded" then Subscriptions::Operations::ActivateSubscription.new
-                    when "failed"    then Subscriptions::Operations::FailSubscription.new
-                    end
+        when "succeeded" then Subscriptions::Operations::ActivateSubscription.new
+        when "failed"    then Subscriptions::Operations::FailSubscription.new
+        end
 
         operation.call(subscription)
         Dry::Monads::Success(payment)

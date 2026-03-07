@@ -1,7 +1,7 @@
 # spec/domains/billing/jobs/billing_job_spec.rb
 require "rails_helper"
 
-RSpec.describe Billing::BillingJob, type: :job do
+RSpec.describe Billing::Jobs::BillingJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:subscription) { create(:subscription, payment_method: "credit_card") }
@@ -48,8 +48,10 @@ RSpec.describe Billing::BillingJob, type: :job do
         .and_return(Dry::Monads::Failure({ error: "gateway timeout" }))
     end
 
-    it "marca o payment como failed" do
-      perform_enqueued_jobs { described_class.perform_later(subscription.id) }
+    it "marca o payment como failed e levanta GatewayError" do
+      expect {
+        described_class.new.perform(subscription.id)
+      }.to raise_error(Billing::GatewayError)
       expect(Payment.last.status).to eq("failed")
     end
 

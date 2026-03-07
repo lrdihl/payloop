@@ -21,7 +21,7 @@ class Subscription < ApplicationRecord
   validates :joined_at,       presence: true
   validates :next_due_date,   presence: true
   validates :payment_method,  presence: true,
-                              inclusion: { in: -> (_) { Shared::PaymentMethods::Registry.all.keys.map(&:to_s) } }
+                              inclusion: { in: ->(_) { Shared::PaymentMethods::Registry.all.keys.map(&:to_s) } }
 
   scope :current, -> { where(status: %w[active pending_payment]) }
 
