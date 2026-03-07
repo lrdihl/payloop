@@ -1,6 +1,6 @@
 <div class="app-content-header">
   <div class="container-fluid">
-    <h3 class="mb-0">Assinatura #<%= @subscription.id %></h3>
+    <h3 class="mb-0"><%= t(".title", id: @subscription.id) %></h3>
   </div>
 </div>
 
@@ -9,41 +9,41 @@
     <div class="card mb-3">
       <div class="card-body">
         <dl class="row mb-0">
-          <dt class="col-sm-3">Cliente</dt>
+          <dt class="col-sm-3"><%= t(".fields.client") %></dt>
           <dd class="col-sm-9"><%= @subscription.user.email %></dd>
 
-          <dt class="col-sm-3">Plano</dt>
+          <dt class="col-sm-3"><%= t(".fields.plan") %></dt>
           <dd class="col-sm-9"><%= @subscription.plan.name %></dd>
 
-          <dt class="col-sm-3">Status</dt>
+          <dt class="col-sm-3"><%= t(".fields.status") %></dt>
           <dd class="col-sm-9"><span class="badge <%= status_badge_class(@subscription.status) %>"><%= @subscription.status %></span></dd>
 
-          <dt class="col-sm-3">Início</dt>
+          <dt class="col-sm-3"><%= t(".fields.joined_at") %></dt>
           <dd class="col-sm-9"><%= @subscription.joined_at %></dd>
 
-          <dt class="col-sm-3">Próx. Vencimento</dt>
+          <dt class="col-sm-3"><%= t(".fields.next_due") %></dt>
           <dd class="col-sm-9"><%= @subscription.next_due_date %></dd>
 
-          <dt class="col-sm-3">Encerramento</dt>
-          <dd class="col-sm-9"><%= @subscription.closed_at || "Vitalício" %></dd>
+          <dt class="col-sm-3"><%= t(".fields.closed_at") %></dt>
+          <dd class="col-sm-9"><%= @subscription.closed_at || t(".lifetime") %></dd>
 
-          <dt class="col-sm-3">Método de Pagamento</dt>
+          <dt class="col-sm-3"><%= t(".fields.payment_method") %></dt>
           <dd class="col-sm-9">
             <% if @subscription.payment_method.present? %>
               <% pm = Shared::PaymentMethods::Registry.find(@subscription.payment_method.to_sym) rescue nil %>
               <%= pm ? pm.new.human_name : @subscription.payment_method %>
             <% else %>
-              <span class="text-muted">Não definido</span>
+              <span class="text-muted"><%= t(".payment_method_undefined") %></span>
             <% end %>
           </dd>
 
           <% if @subscription.canceled_at %>
-            <dt class="col-sm-3">Cancelado em</dt>
+            <dt class="col-sm-3"><%= t(".fields.canceled_at") %></dt>
             <dd class="col-sm-9"><%= @subscription.canceled_at %></dd>
           <% end %>
 
           <% if %w[active error_payment].include?(@subscription.status) && @subscription.closed_at %>
-            <dt class="col-sm-3">Valor residual</dt>
+            <dt class="col-sm-3"><%= t(".fields.residual_value") %></dt>
             <dd class="col-sm-9"><%= @subscription.residual_value %></dd>
           <% end %>
         </dl>
@@ -52,24 +52,25 @@
 
     <div class="d-flex gap-2 flex-wrap">
       <% if @subscription.valid_transition?("active") %>
-        <%= button_to "Ativar", activate_admin_subscription_path(@subscription), method: :patch, class: "btn btn-success" %>
+        <%= button_to t(".buttons.activate"), activate_admin_subscription_path(@subscription), method: :patch, class: "btn btn-success" %>
       <% end %>
       <% if @subscription.valid_transition?("error_payment") %>
-        <%= button_to "Marcar Erro", fail_admin_subscription_path(@subscription), method: :patch, class: "btn btn-warning" %>
+        <%= button_to t(".buttons.fail"), fail_admin_subscription_path(@subscription), method: :patch, class: "btn btn-warning" %>
       <% end %>
       <% if @subscription.valid_transition?("pending_payment") %>
-        <%= button_to "Tentar Novamente", retry_admin_subscription_path(@subscription), method: :patch, class: "btn btn-info" %>
+        <%= button_to t(".buttons.retry"), retry_admin_subscription_path(@subscription), method: :patch, class: "btn btn-info" %>
       <% end %>
       <% if @subscription.valid_transition?("canceled") %>
-        <%= button_to "Cancelar", cancel_admin_subscription_path(@subscription), method: :patch, class: "btn btn-danger", data: { turbo_confirm: "Confirmar cancelamento?" } %>
+        <%= button_to t(".buttons.cancel"), cancel_admin_subscription_path(@subscription), method: :patch, class: "btn btn-danger",
+              data: { turbo_confirm: t("shared.actions.confirm_cancel") } %>
       <% end %>
       <% if @subscription.valid_transition?("closed") %>
-        <%= button_to "Encerrar", close_admin_subscription_path(@subscription), method: :patch, class: "btn btn-secondary" %>
+        <%= button_to t(".buttons.close"), close_admin_subscription_path(@subscription), method: :patch, class: "btn btn-secondary" %>
       <% end %>
     </div>
 
     <div class="card mt-3">
-      <div class="card-header">Método de Pagamento</div>
+      <div class="card-header"><%= t(".payment_method_card") %></div>
       <div class="card-body">
         <%= form_with url: update_payment_method_admin_subscription_path(@subscription), method: :patch do |f| %>
           <div class="d-flex gap-2 align-items-end">
@@ -79,14 +80,14 @@
                   { selected: @subscription.payment_method },
                   { name: "subscription[payment_method]", class: "form-select" } %>
             </div>
-            <%= f.submit "Atualizar", class: "btn btn-primary" %>
+            <%= f.submit t(".update_button"), class: "btn btn-primary" %>
           </div>
         <% end %>
       </div>
     </div>
 
     <div class="mt-3">
-      <%= link_to "← Voltar", admin_subscriptions_path, class: "btn btn-outline-secondary" %>
+      <%= link_to t(".buttons.back"), admin_subscriptions_path, class: "btn btn-outline-secondary" %>
     </div>
   </div>
 </div>

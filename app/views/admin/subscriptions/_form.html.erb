@@ -2,36 +2,36 @@
 
 <%= form_with url: admin_subscriptions_path, method: :post do |f| %>
   <div class="mb-3">
-    <%= f.label :user_id, "Cliente", class: "form-label" %>
+    <%= f.label :user_id, t("admin.subscriptions.form.client"), class: "form-label" %>
     <%= f.select :user_id,
         User.where(role: :customer).order(:email).map { |u| [u.email, u.id] },
-        { include_blank: "Selecione um cliente" },
+        { include_blank: t("admin.subscriptions.form.client_blank") },
         { name: "subscription[user_id]", class: "form-select" } %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :plan_id, "Plano", class: "form-label" %>
+    <%= f.label :plan_id, t("admin.subscriptions.form.plan"), class: "form-label" %>
     <%= f.select :plan_id,
         Plan.kept.active.order(:name).map { |p| [p.name, p.id] },
-        { include_blank: "Selecione um plano" },
+        { include_blank: t("admin.subscriptions.form.plan_blank") },
         { name: "subscription[plan_id]", class: "form-select" } %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :joined_at, "Data de início", class: "form-label" %>
+    <%= f.label :joined_at, t("admin.subscriptions.form.joined_at"), class: "form-label" %>
     <%= f.date_field :joined_at, name: "subscription[joined_at]", value: Date.current, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :payment_method, "Método de Pagamento", class: "form-label" %>
+    <%= f.label :payment_method, t("admin.subscriptions.form.payment_method"), class: "form-label" %>
     <%= f.select :payment_method,
         Shared::PaymentMethods::Registry.active_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
-        { include_blank: "Selecione um método" },
+        { include_blank: t("admin.subscriptions.form.payment_method_blank") },
         { name: "subscription[payment_method]", class: "form-select" } %>
   </div>
 
   <div class="d-flex gap-2">
-    <%= f.submit "Criar Assinatura", class: "btn btn-primary" %>
-    <%= link_to "Cancelar", admin_subscriptions_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit t("admin.subscriptions.form.submit"), class: "btn btn-primary" %>
+    <%= link_to t("shared.actions.cancel"), admin_subscriptions_path, class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
