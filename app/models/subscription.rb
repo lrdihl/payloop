@@ -2,7 +2,7 @@ class Subscription < ApplicationRecord
   VALID_TRANSITIONS = {
     "pending_payment" => %w[active error_payment],
     "error_payment"   => %w[pending_payment canceled],
-    "active"          => %w[canceled closed],
+    "active"          => %w[canceled closed pending_payment],
     "canceled"        => [],
     "closed"          => []
   }.freeze
