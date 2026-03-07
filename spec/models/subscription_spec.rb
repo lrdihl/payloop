@@ -79,8 +79,8 @@ RSpec.describe Subscription, type: :model do
       expect(transitions["error_payment"]).to match_array(%w[pending_payment canceled])
     end
 
-    it "active pode ir para canceled e closed" do
-      expect(transitions["active"]).to match_array(%w[canceled closed])
+    it "active pode ir para canceled, closed e pending_payment" do
+      expect(transitions["active"]).to match_array(%w[canceled closed pending_payment])
     end
 
     it "canceled não pode transitar para nenhum estado" do
