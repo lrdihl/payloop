@@ -27,6 +27,7 @@ Rails.application.routes.draw do
         patch :retry
         patch :cancel
         patch :close
+        patch :update_payment_method
       end
     end
     root to: "dashboard#index"
@@ -36,6 +37,7 @@ Rails.application.routes.draw do
     resources :subscriptions, only: %i[index new create] do
       member do
         patch :cancel
+        patch :update_payment_method
       end
     end
     resource :profile, only: %i[show edit update]
