@@ -6,26 +6,158 @@ Sistema de assinaturas recorrentes construído com Ruby on Rails, seguindo princ
 
 ## Sobre o projeto
 
-O PAYLOOP gerencia planos de assinatura com cobrança recorrente mensal. Cada cliente escolhe um plano, uma forma de pagamento e um dia de vencimento. O sistema gera cobranças automaticamente, processa os pagamentos, realiza retentativas em caso de falha e garante que nenhum cliente seja cobrado duas vezes no mesmo período.
+O PAYLOOP gerencia planos de assinatura com cobrança recorrente. Cada cliente escolhe um plano e uma forma de pagamento. O sistema gera cobranças automaticamente, processa os pagamentos via gateway (simulado), realiza retentativas em caso de falha e garante que nenhum cliente seja cobrado duas vezes no mesmo período.
 
-A arquitetura foi pensada para ser extensível: novas formas de pagamento (Pix, cartão parcelado, gateways externos, etc.) podem ser adicionadas sem modificar o código existente — seguindo o princípio Open/Closed do SOLID.
+Novas formas de pagamento podem ser adicionadas sem modificar o código existente — seguindo o princípio Open/Closed do SOLID através do `Shared::PaymentMethods::Registry`.
 
 ---
 
 ## Stack
 
-- **Ruby** 4.0.1
-- **Rails** ~> 8.0.4
-- **SQLite3** (banco de dados)
-- **Puma** (servidor web)
-- **Vite Rails** (frontend build)
-- **Devise** (autenticação)
-- **Alba** (serialização / presenters)
-- **Solid Cache / Queue / Cable** (jobs, cache e websockets via banco)
-- **RSpec** + **FactoryBot** + **Faker** (testes)
-- **SimpleCov** (cobertura de testes)
-- **Brakeman** + **RuboCop** (análise estática e lint)
-- **Docker** + **Docker Compose** (containerização)
+- **Ruby** 4.0.1 / **Rails** ~> 8.1.2
+- **SQLite3** — banco de dados (Solid Cache / Queue / Cable nativos)
+- **Puma** — servidor web
+- **Vite Rails** — frontend build
+- **Devise** — autenticação (database_authenticatable, confirmable, lockable, trackable)
+- **Pundit** — autorização (deny-all por padrão)
+- **dry-validation / dry-monads / dry-transaction** — contratos e operações de domínio
+- **Alba** — serialização / presenters
+- **Solid Queue** — processamento de jobs e cron jobs (`config/recurring.yml`)
+- **RSpec** + **FactoryBot** + **Faker** — testes
+- **SimpleCov** — cobertura mínima de 90%
+- **Brakeman** + **RuboCop** — análise estática e lint
+- **Docker** + **Docker Compose** — containerização
+
+---
+
+## Arquitetura
+
+O projeto segue **Domain-Driven Design (DDD)** com separação clara de responsabilidades:
+
+```
+app/
+  controllers/          # Thin controllers — apenas autorização + chamada de operation
+  domains/
+    billing/
+      contracts/        # Validação do payload do webhook
+      jobs/             # BillingJob, CloseSubscriptionsJob, ChargeSubscriptionsJob
+      operations/       # ProcessPayment, HandleGatewayCallback
+    identity/
+      contracts/        # Validação de registro e perfil
+      operations/       # RegisterUser, UpdateProfile, UpdateUserRole
+    plans/
+      contracts/        # Validação de plano
+      operations/       # CreatePlan, UpdatePlan, DiscardPlan
+    shared/
+      payment_methods/  # Registry + Base + CreditCard, Boleto, BankDeposit
+      values/           # Money, Period (value objects)
+    subscriptions/
+      contracts/        # CreateSubscription, UpdatePaymentMethod
+      operations/       # CreateSubscription, ActivateSubscription, FailSubscription,
+                        #   CancelSubscription, CloseSubscription, RetrySubscription,
+                        #   PendingSubscription, UpdatePaymentMethod
+  models/               # Persistência pura + Devise + validações estruturais
+  policies/             # Pundit — deny-all por padrão, permissões opt-in
+```
+
+### Padrões
+
+| Camada | Responsabilidade |
+|--------|-----------------|
+| **Controller** | Autoriza via Pundit, chama uma Operation, passa o resultado para `handle_result` |
+| **Operation** (dry-transaction) | Regra de negócio — retorna `Success(value)` ou `Failure({type:, errors:})` |
+| **Contract** (dry-validation) | Valida shape e semântica do input antes da operation |
+| **Model** | Persistência + validações estruturais + associações. Sem regras de negócio |
+| **Value Object** | `Money` (cents + currency) e `Period` (count + type) — imutáveis, sem identidade |
+| **Job** | Orquestra operações assíncronas (billing, cron de fechamento e cobrança) |
+
+---
+
+## Ciclo de vida de uma Subscription
+
+```
+                     ┌─────────────────────────────────────────┐
+                     │            VALID_TRANSITIONS             │
+                     └─────────────────────────────────────────┘
+
+  pending_payment ──► active ──────────────────────────► closed
+       ▲    │            │                                  ▲
+       │    │            ├──► pending_payment (renovação)   │
+       │    ▼            │                                  │
+       │ error_payment   └──► canceled             succeeded + closed_at vencido
+       │    │
+       └────┘ (retry)
+```
+
+| Transição | Disparada por |
+|-----------|--------------|
+| `pending_payment → active` | Webhook de pagamento com `succeeded` |
+| `pending_payment → error_payment` | Esgotamento de retries do `BillingJob` |
+| `active → pending_payment` | `ChargeSubscriptionsJob` (renovação) |
+| `active → closed` | `CloseSubscriptionsJob` ou webhook `succeeded` com `closed_at` vencido |
+| `active → canceled` | Ação do admin ou cliente |
+| `error_payment → pending_payment` | Retry manual (admin/cliente) |
+| `error_payment → canceled` | Ação do admin |
+
+---
+
+## Fluxo de cobrança
+
+```
+ChargeSubscriptionsJob (00:10)
+        │
+        ▼
+PendingSubscription  ──► subscription → pending_payment
+        │
+        ▼
+  BillingJob.perform_later
+        │
+        ▼
+ProcessPayment (operation)
+  ├─ cria Payment (pending)
+  └─ chama PaymentMethod#process(payment:)
+        │
+        ├── Success → Payment salvo (pending) → aguarda webhook
+        └── Failure → Payment (failed) → GatewayError → retry com backoff polinomial
+                                                    (até BILLING_MAX_RETRIES, default 5)
+                                                    após esgotar → FailSubscription
+                                                                → subscription: error_payment
+```
+
+### Webhook de callback
+
+O gateway envia o resultado via `POST /webhooks/gateway_callbacks` autenticado com `X-Signature: Token <token>`.
+
+`HandleGatewayCallback` operation:
+- Localiza o `Payment` pelo `transaction_id`
+- Idempotente — se o payment já foi processado, retorna 200 sem reprocessar
+- `succeeded` → `ActivateSubscription` (ou `CloseSubscription` se `closed_at ≤ hoje`)
+- `failed` → `FailSubscription`
+
+---
+
+## Formas de pagamento
+
+Registradas em `Shared::PaymentMethods::Registry` via initializer (`config/initializers/payment_methods.rb`):
+
+| Chave | Classe |
+|-------|--------|
+| `credit_card` | `Shared::PaymentMethods::CreditCard` |
+| `boleto` | `Shared::PaymentMethods::Boleto` |
+| `bank_deposit` | `Shared::PaymentMethods::BankDeposit` |
+
+Para adicionar uma nova forma de pagamento basta criar uma classe que herda de `Base` e chama `Registry.register(:chave, self)`.
+
+---
+
+## Cron Jobs (Solid Queue)
+
+Configurados em `config/recurring.yml`:
+
+| Horário | Job | Ação |
+|---------|-----|------|
+| 00:00 | `CloseSubscriptionsJob` | Fecha subscriptions `active` com `closed_at == hoje` |
+| 00:10 | `ChargeSubscriptionsJob` | Move para `pending_payment` subscriptions `active` com `next_due_date == hoje` e enfileira `BillingJob` |
 
 ---
 
@@ -39,17 +171,10 @@ A arquitetura foi pensada para ser extensível: novas formas de pagamento (Pix, 
 
 ## Instalação e configuração
 
-Clone o repositório e copie o arquivo de variáveis de ambiente:
-
 ```bash
 git clone https://github.com/seu-usuario/payloop.git
 cd payloop
 cp .env.example .env
-```
-
-Faça o build da imagem, prepare o banco e popule com dados iniciais:
-
-```bash
 make setup
 ```
 
@@ -57,16 +182,9 @@ make setup
 
 ## Rodando o projeto
 
-Suba os containers em background:
-
 ```bash
-make start
-```
-
-Em outro terminal, inicie o servidor Vite para o frontend:
-
-```bash
-make vite
+make start   # sobe os containers em background
+make vite    # inicia o servidor Vite (em outro terminal)
 ```
 
 A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
@@ -76,7 +194,7 @@ A aplicação estará disponível em [http://localhost:3000](http://localhost:30
 ## Comandos disponíveis
 
 | Comando | Descrição |
-|---|---|
+|---------|-----------|
 | `make setup` | Build + banco + seed (primeira vez) |
 | `make start` | Sobe os containers em background |
 | `make stop` | Para os containers |
@@ -97,10 +215,10 @@ A aplicação estará disponível em [http://localhost:3000](http://localhost:30
 
 ## Usuários de desenvolvimento
 
-Após rodar `make setup` (ou `make db_seed`), os seguintes usuários já estão disponíveis:
+Após `make setup` (ou `make db_seed`):
 
 | Role | E-mail | Senha |
-|---|---|---|
+|------|--------|-------|
 | Admin | `admin@payloop.dev` | `senha@123` |
 | Customer | `customer@payloop.dev` | `senha@123` |
 
@@ -112,90 +230,50 @@ Após rodar `make setup` (ou `make db_seed`), os seguintes usuários já estão 
 
 ```bash
 make teste
+make teste_coverage   # relatório em coverage/index.html
 ```
 
-Para visualizar a cobertura de testes:
-
-```bash
-make teste_coverage
-```
-
-A cobertura mínima exigida é de **90%**. O SimpleCov gera um relatório em `coverage/index.html` após cada execução.
+Cobertura mínima exigida: **90%**.
 
 ---
 
 ## CI/CD
 
-### Integração Contínua (CI)
+### Integração Contínua
 
-Todo Pull Request aberto para a branch `main` passa obrigatoriamente pelos seguintes checks antes de poder ser mergeado:
+Todo PR para `main` passa pelos seguintes checks:
 
 | Check | Ferramenta | O que valida |
-|---|---|---|
+|-------|-----------|--------------|
 | Lint | RuboCop | Estilo e consistência do código |
-| Security | Brakeman | Vulnerabilidades de segurança no código Rails |
-| Autoload | Zeitwerk | Convenções de nomeação e carregamento de arquivos |
-| Testes | RSpec | Suíte completa de testes |
-| Cobertura | SimpleCov | Cobertura mínima de 90% |
-| Dependências | Dependency Review | Vulnerabilidades críticas introduzidas no PR |
-
-A branch `main` está protegida — push direto é bloqueado para todos. Todo código passa pelo CI antes de ser mergeado.
-
-### Antes de abrir um PR
-
-Rode o CI localmente para garantir que tudo passa:
+| Security | Brakeman | Vulnerabilidades Rails |
+| Autoload | Zeitwerk | Convenções de nomeação |
+| Testes | RSpec | Suíte completa |
+| Cobertura | SimpleCov | Mínimo de 90% |
+| Dependências | Dependency Review | Vulnerabilidades críticas no PR |
 
 ```bash
-make ci
+make ci        # rode antes de abrir o PR
+make lint_fix  # corrige ofensas do RuboCop automaticamente
 ```
 
-Se o RuboCop apontar ofensas, corrija automaticamente com:
+### Entrega Contínua
 
-```bash
-make lint_fix
-```
-
-### Entrega Contínua (CD)
-
-O deploy é automático: ao mergear um PR na `main`, o GitHub Actions dispara o deploy no Render via webhook. O fluxo completo é:
+Merge na `main` → GitHub Actions → deploy automático no Render via webhook.
 
 ```
-PR mergeado na main
-      ↓
-GitHub Actions dispara o webhook do Render
-      ↓
-Render faz o build da imagem Docker (stage production)
-      ↓
-Migrations rodam automaticamente via bin/docker-entrypoint
-      ↓
-Novo container sobe em produção
+PR mergeado na main → build Docker (production) → migrations → novo container em produção
 ```
-
-A infraestrutura está declarada no `render.yaml` na raiz do repositório. O ambiente de produção está disponível em [https://payloop-k2tq.onrender.com](https://payloop-k2tq.onrender.com).
 
 ### Variáveis de ambiente em produção
 
 | Variável | Origem |
-|---|---|
+|----------|--------|
 | `RAILS_ENV` | `render.yaml` |
-| `RAILS_LOG_TO_STDOUT` | `render.yaml` |
-| `RAILS_SERVE_STATIC_FILES` | `render.yaml` |
 | `SECRET_KEY_BASE` | Gerado automaticamente pelo Render |
-| `RAILS_MASTER_KEY` | Definido manualmente no painel do Render |
-| `APP_HOST` | Definido manualmente no painel do Render |
-
-Segredos nunca ficam no repositório — são definidos exclusivamente no painel do Render.
-
-### Dependabot
-
-O Dependabot monitora gems (Bundler) e actions do GitHub Actions, abrindo PRs automáticos semanalmente para manter as dependências atualizadas. PRs do Dependabot passam pelo mesmo CI antes de serem mergeados.
-
-### O que pode evoluir quando o projeto crescer
-
-- **Testes de sistema** — RSpec com Capybara/Selenium para fluxos críticos end-to-end
-- **Cache do CI** — conforme o projeto crescer, o tempo de pipeline vai aumentar; vale adicionar cache do bundle
-- **Notificação de falha** — um alerta no Slack/email quando o CI falha na main
-- **Cobertura por camada** — o SimpleCov permite configurar cobertura mínima por camada (models, controllers, services) e não só global
+| `RAILS_MASTER_KEY` | Painel do Render |
+| `APP_HOST` | Painel do Render |
+| `BILLING_MAX_RETRIES` | Painel do Render (default: `5`) |
 
 ---
 
