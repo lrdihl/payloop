@@ -46,7 +46,7 @@ RSpec.describe "Webhooks::GatewayCallbacks", type: :request do
            params:  valid_payload.except(:transaction_id),
            headers: token_header,
            as:      :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "retorna 422 quando status é inválido" do
@@ -54,7 +54,7 @@ RSpec.describe "Webhooks::GatewayCallbacks", type: :request do
            params:  valid_payload.merge(status: "pending"),
            headers: token_header,
            as:      :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

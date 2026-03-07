@@ -9,7 +9,7 @@ module Subscriptions
       private
 
       def check_transition(subscription)
-        if subscription.valid_transition?("pending_payment")
+        if subscription.error_payment? && subscription.valid_transition?("pending_payment")
           Dry::Monads::Success(subscription)
         else
           Dry::Monads::Failure({ type: :invalid_transition, errors: { status: [ "transição inválida: #{subscription.status} -> pending_payment" ] } })
