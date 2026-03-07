@@ -29,6 +29,13 @@ pt-BR:
       pending: "Pendente"
       succeeded: "Aprovado"
       failed: "Falhou"
+    interval_types:
+      month:
+        one: "mês"
+        other: "%{count} meses"
+      year:
+        one: "ano"
+        other: "%{count} anos"
 
   flash:
     unauthorized: "Você não tem permissão para realizar esta ação."
@@ -157,6 +164,7 @@ pt-BR:
           id: "ID"
           client: "Cliente"
           plan: "Plano"
+          value: "Valor"
           status: "Status"
           next_due: "Próx. Vencimento"
           closed_at: "Encerramento"

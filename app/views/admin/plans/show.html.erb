@@ -20,10 +20,10 @@
       <dd class="col-sm-8"><%= @plan.description || "—" %></dd>
 
       <dt class="col-sm-4"><%= t(".fields.price") %></dt>
-      <dd class="col-sm-8"><%= number_to_currency(@plan.price_cents / 100.0, unit: @plan.currency == "BRL" ? "R$" : "$") %></dd>
+      <dd class="col-sm-8"><%= @plan.price %></dd>
 
       <dt class="col-sm-4"><%= t(".fields.recurrence") %></dt>
-      <dd class="col-sm-8"><%= @plan.interval_count %>x <%= @plan.interval_type %></dd>
+      <dd class="col-sm-8"><%= format_period(@plan.interval_count, @plan.interval_type) %></dd>
 
       <dt class="col-sm-4"><%= t(".fields.status") %></dt>
       <dd class="col-sm-8">

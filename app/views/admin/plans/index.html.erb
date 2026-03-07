@@ -26,8 +26,8 @@
               <tr>
                 <td><%= plan.id %></td>
                 <td><%= plan.name %></td>
-                <td><%= number_to_currency(plan.price_cents / 100.0, unit: plan.currency == "BRL" ? "R$" : "$") %></td>
-                <td><%= plan.interval_count %>x <%= plan.interval_type %></td>
+                <td><%= plan.price %></td>
+                <td><%= format_period(plan.interval_count, plan.interval_type) %></td>
                 <td>
                   <span class="badge bg-<%= plan.active? ? 'success' : 'secondary' %>">
                     <%= plan.active? ? t(".status.active") : t(".status.inactive") %>

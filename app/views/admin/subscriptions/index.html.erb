@@ -16,6 +16,7 @@
               <th><%= t(".columns.id") %></th>
               <th><%= t(".columns.client") %></th>
               <th><%= t(".columns.plan") %></th>
+              <th class="text-end"><%= t(".columns.value") %></th>
               <th><%= t(".columns.status") %></th>
               <th><%= t(".columns.next_due") %></th>
               <th><%= t(".columns.closed_at") %></th>
@@ -28,6 +29,7 @@
                 <td><%= subscription.id %></td>
                 <td><%= subscription.user.email %></td>
                 <td><%= subscription.plan.name %></td>
+                <td class="text-end"><%= subscription.plan.price %></td>
                 <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= t("shared.subscription_statuses.#{subscription.status}") %></span></td>
                 <td><%= subscription.next_due_date %></td>
                 <td><%= subscription.closed_at || t(".lifetime") %></td>
