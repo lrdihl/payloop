@@ -43,31 +43,7 @@
       </nav>
 
       <%# Sidebar %>
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <div class="sidebar-brand">
-          <a href="<%= admin_root_path %>" class="brand-link">
-            <span class="brand-text fw-bold"><b>Pay</b>loop</span>
-          </a>
-        </div>
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu">
-              <li class="nav-item">
-                <%= link_to admin_users_path, class: "nav-link #{'active' if controller_name == 'users'}" do %>
-                  <i class="nav-icon fa fa-users"></i>
-                  <p>Usuários</p>
-                <% end %>
-              </li>
-              <li class="nav-item">
-                <%= link_to admin_plans_path, class: "nav-link #{'active' if controller_name == 'plans'}" do %>
-                  <i class="nav-icon fa fa-tags"></i>
-                  <p>Planos</p>
-                <% end %>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
+      <%= render "shared/sidebar" %>
 
       <%# Main content %>
       <main class="app-main">

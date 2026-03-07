@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
+    resource :profile, only: %i[show edit update]
     root to: "dashboard#index"
   end
 end

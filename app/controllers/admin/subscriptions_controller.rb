@@ -1,5 +1,5 @@
 module Admin
-  class SubscriptionsController < ApplicationController
+  class SubscriptionsController < BaseController
     include Dry::Monads[:result]
 
     layout "admin"
