@@ -62,8 +62,13 @@ module Billing
         subscription = payment.subscription
 
         operation = subscription_operation(input[:status].to_s, subscription)
-        operation.call(subscription)
-        Dry::Monads::Success(payment)
+        result    = operation.call(subscription)
+
+        if result.success?
+          Dry::Monads::Success(payment)
+        else
+          Dry::Monads::Failure(result.failure)
+        end
       end
 
       def subscription_operation(status, subscription)
