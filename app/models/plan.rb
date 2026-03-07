@@ -17,6 +17,11 @@ class Plan < ApplicationRecord
   validates :interval_type,  presence: true, inclusion: { in: INTERVAL_TYPES }
   validates :active,         inclusion: { in: [ true, false ] }
 
+  has_many :subscriptions, dependent: :restrict_with_error
+
+  scope :active,   -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+
   validates :duration_type,  inclusion: { in: DURATION_TYPES }, allow_nil: true
   validates :duration_count, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validate  :duration_fields_consistency
@@ -30,9 +35,4 @@ class Plan < ApplicationRecord
       errors.add(:duration_count, :blank)
     end
   end
-
-  has_many :subscriptions, dependent: :restrict_with_error
-
-  scope :active,   -> { where(active: true) }
-  scope :inactive, -> { where(active: false) }
 end
