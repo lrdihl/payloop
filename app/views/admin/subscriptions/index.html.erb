@@ -1,0 +1,42 @@
+<div class="app-content-header">
+  <div class="container-fluid">
+    <h3 class="mb-0">Assinaturas</h3>
+  </div>
+</div>
+
+<div class="app-content">
+  <div class="container-fluid">
+    <%= link_to "Nova Assinatura", new_admin_subscription_path, class: "btn btn-primary mb-3" %>
+
+    <div class="card">
+      <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Plano</th>
+              <th>Status</th>
+              <th>Próx. Vencimento</th>
+              <th>Encerramento</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @subscriptions.each do |subscription| %>
+              <tr>
+                <td><%= subscription.id %></td>
+                <td><%= subscription.user.email %></td>
+                <td><%= subscription.plan.name %></td>
+                <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= subscription.status %></span></td>
+                <td><%= subscription.next_due_date %></td>
+                <td><%= subscription.closed_at || "Vitalício" %></td>
+                <td><%= link_to "Ver", admin_subscription_path(subscription), class: "btn btn-sm btn-outline-secondary" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
