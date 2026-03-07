@@ -9,6 +9,14 @@
         { name: "subscription[plan_id]", class: "form-select" } %>
   </div>
 
+  <div class="mb-3">
+    <%= f.label :payment_method, "Método de Pagamento", class: "form-label" %>
+    <%= f.select :payment_method,
+        Shared::PaymentMethods::Registry.active_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
+        { include_blank: "Selecione um método" },
+        { name: "subscription[payment_method]", class: "form-select" } %>
+  </div>
+
   <div class="d-flex gap-2">
     <%= f.submit "Assinar", class: "btn btn-primary" %>
     <%= link_to "Cancelar", customer_subscriptions_path, class: "btn btn-outline-secondary" %>
