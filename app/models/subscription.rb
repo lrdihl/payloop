@@ -10,6 +10,7 @@ class Subscription < ApplicationRecord
   # 3. Associations
   belongs_to :plan
   belongs_to :user
+  has_many   :payments, dependent: :destroy
 
   # 4. Field settings
   enum :status, {
