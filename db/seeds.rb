@@ -65,6 +65,15 @@ end
 
 # ---------------------------------------------------------------------------
 puts ""
+puts "Criando WebhookToken de demonstração..."
+
+webhook_token = WebhookToken.find_or_create_by!(webhook: "gateway_callbacks") do |t|
+  t.token = "demo_webhook_token_payloop_2026"
+end
+puts "  Token → #{webhook_token.http_authentication_token}"
+
+# ---------------------------------------------------------------------------
+puts ""
 puts "Criando clientes de demonstração..."
 
 basico_mensal = Plan.find_by!(name: "Básico Mensal")
@@ -139,6 +148,7 @@ end
 puts "  Kiko      → kiko@payloop.dev      (cancelada / succeeded)"
 
 # Cliente 3 — Chiquinha: assinatura pending_payment, 1 pagamento pending
+# Cenário de demo: webhook com "succeeded" deve ativar a assinatura
 chiquinha = User.find_or_create_by!(email: "chiquinha@payloop.dev") do |u|
   u.password              = "senha@123"
   u.password_confirmation = "senha@123"
@@ -166,10 +176,11 @@ unless sub_chiquinha.persisted?
     payment_method: "boleto",
     status:         :pending,
     attempt_number: 1,
-    transaction_id: SecureRandom.uuid
+    transaction_id: "chiquinha-demo-transaction-001"
   )
 end
 puts "  Chiquinha → chiquinha@payloop.dev (pending_payment / pending)"
+puts "             transaction_id: chiquinha-demo-transaction-001"
 
 # Cliente 4 — Nhonho: assinatura error_payment, 1 pagamento failed
 nhonho = User.find_or_create_by!(email: "nhonho@payloop.dev") do |u|
@@ -204,3 +215,10 @@ unless sub_nhonho.persisted?
   )
 end
 puts "  Nhonho    → nhonho@payloop.dev    (error_payment / failed)"
+
+puts ""
+puts "Demo webhook:"
+puts "  curl -X POST http://localhost:3000/webhooks/gateway_callbacks \\"
+puts "    -H \"X-Signature: #{webhook_token.http_authentication_token}\" \\"
+puts "    -H \"Content-Type: application/json\" \\"
+puts "    -d '{\"transaction_id\": \"chiquinha-demo-transaction-001\", \"status\": \"succeeded\"}'"
