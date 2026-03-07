@@ -18,6 +18,7 @@ module Subscriptions
 
       def update_status(subscription)
         if subscription.update(status: :pending_payment)
+          Billing::Jobs::BillingJob.perform_later(subscription.id)
           Dry::Monads::Success(subscription)
         else
           Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
