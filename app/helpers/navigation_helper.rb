@@ -8,7 +8,7 @@ module NavigationHelper
       items << nav_item("Planos",             "fa-tags",        admin_plans_path,              "admin/plans")             if admin.plans?
       items << nav_item("Assinaturas",        "fa-credit-card", admin_subscriptions_path,      "admin/subscriptions")     if admin.subscriptions?
       items << nav_item("Minhas Assinaturas", "fa-credit-card", customer_subscriptions_path,   "customer/subscriptions")  if customer.subscriptions?
-      items << nav_item("Meu Perfil",         "fa-user",        customer_profile_path,         "customer/profile")        if customer.profile?
+      items << nav_item("Meu Perfil",         "fa-user",        customer_profile_path,         "customer/profiles")       if customer.profile?
     end
   end
 

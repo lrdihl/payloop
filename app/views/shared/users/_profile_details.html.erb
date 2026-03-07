@@ -1,0 +1,20 @@
+<dl class="row">
+  <dt class="col-sm-4">E-mail</dt>
+  <dd class="col-sm-8"><%= user.email %></dd>
+
+  <dt class="col-sm-4">Nome</dt>
+  <dd class="col-sm-8"><%= user.full_name || "—" %></dd>
+
+  <dt class="col-sm-4">CPF</dt>
+  <dd class="col-sm-8"><%= user.document || "—" %></dd>
+
+  <dt class="col-sm-4">Telefone</dt>
+  <dd class="col-sm-8"><%= user.phone || "—" %></dd>
+
+  <dt class="col-sm-4">Role</dt>
+  <dd class="col-sm-8">
+    <span class="badge bg-<%= user.admin? ? 'danger' : 'secondary' %>">
+      <%= user.role %>
+    </span>
+  </dd>
+</dl>
