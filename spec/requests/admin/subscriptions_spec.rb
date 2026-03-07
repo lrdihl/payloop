@@ -57,9 +57,10 @@ RSpec.describe "Admin::Subscriptions", type: :request do
     let(:valid_params) do
       {
         subscription: {
-          user_id:   customer.id,
-          plan_id:   plan.id,
-          joined_at: Date.current.to_s
+          user_id:        customer.id,
+          plan_id:        plan.id,
+          joined_at:      Date.current.to_s,
+          payment_method: "credit_card"
         }
       }
     end
@@ -174,6 +175,42 @@ RSpec.describe "Admin::Subscriptions", type: :request do
     it "atualiza status para closed" do
       patch close_admin_subscription_path(subscription)
       expect(subscription.reload.status).to eq("closed")
+    end
+  end
+
+  # ─── PATCH update_payment_method ─────────────────────────────────────────────
+
+  describe "PATCH /admin/subscriptions/:id/update_payment_method" do
+    let(:subscription) { create(:subscription, user: customer, plan:, payment_method: "credit_card") }
+
+    it "redireciona após atualizar" do
+      patch update_payment_method_admin_subscription_path(subscription),
+            params: { subscription: { payment_method: "boleto" } }
+      expect(response).to have_http_status(:redirect)
+    end
+
+    it "atualiza o payment_method" do
+      patch update_payment_method_admin_subscription_path(subscription),
+            params: { subscription: { payment_method: "boleto" } }
+      expect(subscription.reload.payment_method).to eq("boleto")
+    end
+
+    context "com método inválido" do
+      it "retorna 422" do
+        patch update_payment_method_admin_subscription_path(subscription),
+              params: { subscription: { payment_method: "xpto" } }
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    context "quando customer tenta acessar" do
+      before { sign_in customer }
+
+      it "redireciona com alerta" do
+        patch update_payment_method_admin_subscription_path(subscription),
+              params: { subscription: { payment_method: "boleto" } }
+        expect(response).to have_http_status(:redirect)
+      end
     end
   end
 end

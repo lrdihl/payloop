@@ -4,7 +4,7 @@ module Admin
 
     layout "admin"
 
-    before_action :set_subscription, only: %i[show activate fail retry cancel close]
+    before_action :set_subscription, only: %i[show activate fail retry cancel close update_payment_method]
 
     def index
       authorize Subscription
@@ -55,6 +55,19 @@ module Admin
       handle_transition(Subscriptions::Operations::CloseSubscription.new.call(@subscription))
     end
 
+    def update_payment_method
+      authorize @subscription, :update_payment_method?
+
+      result = Subscriptions::Operations::UpdatePaymentMethod.new.call(
+        subscription: @subscription,
+        payment_method: params.dig(:subscription, :payment_method)
+      )
+
+      handle_result(result) do |subscription|
+        redirect_to admin_subscription_path(subscription), notice: "Método de pagamento atualizado."
+      end
+    end
+
     private
 
     def set_subscription
@@ -63,7 +76,7 @@ module Admin
 
     def subscription_params
       params.require(:subscription)
-            .permit(:user_id, :plan_id, :joined_at)
+            .permit(:user_id, :plan_id, :joined_at, :payment_method)
             .to_h
             .deep_symbolize_keys
     end
