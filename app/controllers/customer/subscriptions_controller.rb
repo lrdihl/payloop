@@ -16,7 +16,7 @@ module Customer
       authorize Subscription
 
       if Subscription.current.exists?(user_id: current_user.id)
-        redirect_to customer_subscriptions_path, notice: "Você já possui uma assinatura ativa ou pendente."
+        redirect_to customer_subscriptions_path, notice: t("controllers.subscriptions.already_active")
       else
         @subscription = Subscription.new
       end
@@ -33,7 +33,7 @@ module Customer
       )
 
       handle_result(result) do |_subscription|
-        redirect_to customer_subscriptions_path, notice: "Assinatura criada com sucesso."
+        redirect_to customer_subscriptions_path, notice: t("controllers.subscriptions.created")
       end
     end
 
@@ -44,10 +44,10 @@ module Customer
 
       case result
       in Dry::Monads::Success(_)
-        redirect_to customer_subscriptions_path, notice: "Assinatura cancelada."
+        redirect_to customer_subscriptions_path, notice: t("controllers.subscriptions.canceled")
       in Dry::Monads::Failure({ errors: errors })
         message = errors.values.flatten.first
-        redirect_to customer_subscriptions_path, alert: "Transição inválida: #{message}"
+        redirect_to customer_subscriptions_path, alert: t("controllers.subscriptions.invalid_transition", message: message)
       end
     end
 
@@ -60,7 +60,7 @@ module Customer
       )
 
       handle_result(result) do |_subscription|
-        redirect_to customer_subscriptions_path, notice: "Método de pagamento atualizado."
+        redirect_to customer_subscriptions_path, notice: t("controllers.subscriptions.payment_method_updated")
       end
     end
 
@@ -68,7 +68,7 @@ module Customer
 
     def require_customer!
       unless current_user.customer?
-        flash[:alert] = "Você não tem permissão para realizar esta ação."
+        flash[:alert] = t("flash.unauthorized")
         redirect_to root_path
       end
     end
@@ -76,7 +76,7 @@ module Customer
     def set_subscription
       @subscription = current_user.subscriptions.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      redirect_to customer_subscriptions_path, alert: "Assinatura não encontrada."
+      redirect_to customer_subscriptions_path, alert: t("controllers.subscriptions.not_found")
     end
 
     def subscription_params

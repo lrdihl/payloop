@@ -15,7 +15,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     handle_result(result) do |profile|
       sign_in(profile.user)
-      redirect_to consumer_dashboard_path, notice: "Bem-vindo ao PAYLOOP, #{profile.full_name}!"
+      redirect_to consumer_dashboard_path, notice: t("controllers.registrations.created", name: profile.full_name)
     end
   end
 

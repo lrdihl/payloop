@@ -21,7 +21,7 @@ module Customer
       )
 
       handle_result(result) do
-        redirect_to customer_profile_path, notice: "Perfil atualizado com sucesso."
+        redirect_to customer_profile_path, notice: t("controllers.profiles.updated")
       end
     end
 
@@ -29,7 +29,7 @@ module Customer
 
     def require_customer!
       unless current_user.customer?
-        flash[:alert] = "Você não tem permissão para realizar esta ação."
+        flash[:alert] = t("flash.unauthorized")
         redirect_to root_path
       end
     end

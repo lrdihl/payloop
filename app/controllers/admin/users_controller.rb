@@ -34,7 +34,7 @@ module Admin
       )
 
       handle_result(result) do |profile|
-        redirect_to admin_user_path(profile.user), notice: "Usuário criado com sucesso."
+        redirect_to admin_user_path(profile.user), notice: t("controllers.users.created")
       end
     end
 
@@ -51,14 +51,14 @@ module Admin
       )
 
       handle_result(result) do
-        redirect_to admin_user_path(@user), notice: "Usuário atualizado."
+        redirect_to admin_user_path(@user), notice: t("controllers.users.updated")
       end
     end
 
     def destroy
       authorize @user
       @user.destroy!
-      redirect_to admin_users_path, notice: "Usuário removido."
+      redirect_to admin_users_path, notice: t("controllers.users.destroyed")
     end
 
     # PATCH /admin/users/:id/role
@@ -71,7 +71,7 @@ module Admin
       )
 
       handle_result(result) do
-        redirect_to admin_user_path(@user), notice: "Papel atualizado."
+        redirect_to admin_user_path(@user), notice: t("controllers.users.role_updated")
       end
     end
 

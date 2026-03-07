@@ -26,7 +26,7 @@ module Admin
       result = Subscriptions::Operations::CreateSubscription.new.call(subscription_params)
 
       handle_result(result) do |subscription|
-        redirect_to admin_subscription_path(subscription), notice: "Assinatura criada com sucesso."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.created")
       end
     end
 
@@ -64,7 +64,7 @@ module Admin
       )
 
       handle_result(result) do |subscription|
-        redirect_to admin_subscription_path(subscription), notice: "Método de pagamento atualizado."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.payment_method_updated")
       end
     end
 
@@ -88,10 +88,10 @@ module Admin
     def handle_transition(result)
       case result
       in Dry::Monads::Success(subscription)
-        redirect_to admin_subscription_path(subscription), notice: "Assinatura atualizada."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.created")
       in Dry::Monads::Failure({ errors: errors })
         message = errors.values.flatten.first
-        redirect_to admin_subscription_path(@subscription), alert: "Transição inválida: #{message}"
+        redirect_to admin_subscription_path(@subscription), alert: t("controllers.subscriptions.invalid_transition", message: message)
       end
     end
   end

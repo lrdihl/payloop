@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   def handle_unauthorized
     respond_to do |format|
       format.html do
-        flash[:alert] = "Você não tem permissão para realizar esta ação."
+        flash[:alert] = t("flash.unauthorized")
         redirect_back fallback_location: "/"
       end
       format.json { render json: { error: "Não autorizado" }, status: :forbidden }

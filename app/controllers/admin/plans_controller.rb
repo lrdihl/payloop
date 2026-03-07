@@ -27,7 +27,7 @@ module Admin
       result = Plans::Operations::CreatePlan.new.call(plan_params)
 
       handle_result(result) do |plan|
-        redirect_to admin_plan_path(plan), notice: "Plano criado com sucesso."
+        redirect_to admin_plan_path(plan), notice: t("controllers.plans.created")
       end
     end
 
@@ -41,7 +41,7 @@ module Admin
       result = Plans::Operations::UpdatePlan.new.call(plan_params.merge(plan: @plan))
 
       handle_result(result) do |plan|
-        redirect_to admin_plan_path(plan), notice: "Plano atualizado."
+        redirect_to admin_plan_path(plan), notice: t("controllers.plans.updated")
       end
     end
 
@@ -51,7 +51,7 @@ module Admin
       result = Plans::Operations::DiscardPlan.new.call(plan: @plan)
 
       handle_result(result) do
-        redirect_to admin_plans_path, notice: "Plano removido."
+        redirect_to admin_plans_path, notice: t("controllers.plans.destroyed")
       end
     end
 
