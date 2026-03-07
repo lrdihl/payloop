@@ -33,6 +33,10 @@ Rails.application.routes.draw do
     root to: "dashboard#index"
   end
 
+  namespace :webhooks do
+    resources :gateway_callbacks, only: [:create]
+  end
+
   namespace :customer do
     resources :subscriptions, only: %i[index new create] do
       member do
