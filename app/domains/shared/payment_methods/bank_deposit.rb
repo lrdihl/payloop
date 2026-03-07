@@ -7,9 +7,11 @@ module Shared
         "Depósito Bancário"
       end
 
-      def process(money:)
-        Rails.logger.info "[Depósito Bancário] Simulando cobrança de #{money}"
-        :success
+      def process(payment:)
+        Rails.logger.info "[Depósito Bancário] Simulando cobrança de #{payment.amount_cents}"
+        payment.transaction_id   = SecureRandom.uuid
+        payment.gateway_response = { method: "bank_deposit", simulated: true, timestamp: Time.current.iso8601 }.to_json
+        Dry::Monads::Success(payment)
       end
     end
   end
