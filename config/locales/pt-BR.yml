@@ -12,6 +12,12 @@ pt-BR:
       remove: "Remover"
       confirm_remove: "Confirmar remoção?"
       confirm_cancel: "Confirmar cancelamento?"
+    subscription_statuses:
+      pending_payment: "Pagamento Pendente"
+      active: "Ativa"
+      error_payment: "Erro no Pagamento"
+      canceled: "Cancelada"
+      closed: "Encerrada"
 
   flash:
     unauthorized: "Você não tem permissão para realizar esta ação."

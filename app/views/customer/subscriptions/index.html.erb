@@ -29,7 +29,7 @@
               <% @subscriptions.each do |subscription| %>
                 <tr>
                   <td><%= subscription.plan.name %></td>
-                  <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= subscription.status %></span></td>
+                  <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= t("shared.subscription_statuses.#{subscription.status}") %></span></td>
                   <td>
                     <% if policy(subscription).update_payment_method? %>
                       <%= form_with url: update_payment_method_customer_subscription_path(subscription), method: :patch, class: "d-flex gap-1" do |f| %>

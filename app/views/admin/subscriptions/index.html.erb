@@ -28,7 +28,7 @@
                 <td><%= subscription.id %></td>
                 <td><%= subscription.user.email %></td>
                 <td><%= subscription.plan.name %></td>
-                <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= subscription.status %></span></td>
+                <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= t("shared.subscription_statuses.#{subscription.status}") %></span></td>
                 <td><%= subscription.next_due_date %></td>
                 <td><%= subscription.closed_at || t(".lifetime") %></td>
                 <td><%= link_to "Ver", admin_subscription_path(subscription), class: "btn btn-sm btn-outline-secondary" %></td>

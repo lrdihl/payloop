@@ -16,7 +16,7 @@
           <dd class="col-sm-9"><%= @subscription.plan.name %></dd>
 
           <dt class="col-sm-3"><%= t(".fields.status") %></dt>
-          <dd class="col-sm-9"><span class="badge <%= status_badge_class(@subscription.status) %>"><%= @subscription.status %></span></dd>
+          <dd class="col-sm-9"><span class="badge <%= status_badge_class(@subscription.status) %>"><%= t("shared.subscription_statuses.#{@subscription.status}") %></span></dd>
 
           <dt class="col-sm-3"><%= t(".fields.joined_at") %></dt>
           <dd class="col-sm-9"><%= @subscription.joined_at %></dd>
