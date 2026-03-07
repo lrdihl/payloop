@@ -8,7 +8,7 @@ module Shared
       end
 
       def process(payment:)
-        Rails.logger.info "[Cartão de Crédito] Simulando cobrança de #{payment.amount_cents}"
+        Rails.logger.info "[Cartão de Crédito] Simulando cobrança de #{payment.amount}"
         payment.transaction_id   = SecureRandom.uuid
         payment.gateway_response = { method: "credit_card", simulated: true, timestamp: Time.current.iso8601 }.to_json
         Dry::Monads::Success(payment)

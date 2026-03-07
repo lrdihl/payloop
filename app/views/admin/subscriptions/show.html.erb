@@ -44,7 +44,7 @@
 
           <% if %w[active error_payment].include?(@subscription.status) && @subscription.closed_at %>
             <dt class="col-sm-3">Valor residual</dt>
-            <dd class="col-sm-9"><%= number_to_currency(@subscription.residual_value.to_f / 100, unit: "R$", separator: ",", delimiter: ".") %></dd>
+            <dd class="col-sm-9"><%= @subscription.residual_value %></dd>
           <% end %>
         </dl>
       </div>

@@ -17,12 +17,7 @@ module Subscriptions
       end
 
       def update_status(subscription)
-        interval = Shared::Values::Period.new(
-          count: subscription.plan.interval_count,
-          type:  subscription.plan.interval_type
-        )
-
-        new_next_due_date = interval.advance_from(subscription.next_due_date)
+        new_next_due_date = subscription.plan.interval.advance_from(subscription.next_due_date)
 
         if subscription.update(status: :active, next_due_date: new_next_due_date)
           Dry::Monads::Success(subscription)

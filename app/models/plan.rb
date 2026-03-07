@@ -6,9 +6,19 @@ class Plan < ApplicationRecord
   DURATION_TYPES = %w[month year].freeze
 
   composed_of :price,
-    class_name: "Shared::Values::Money",
-    mapping: [ %w[price_cents cents], %w[currency currency] ],
+    class_name:  "Shared::Values::Money",
+    mapping:     [ %w[price_cents cents], %w[currency currency] ],
     constructor: ->(cents, currency) { Shared::Values::Money.new(cents: cents, currency: currency) }
+
+  composed_of :interval,
+    class_name:  "Shared::Values::Period",
+    mapping:     [ %w[interval_count count], %w[interval_type type] ],
+    constructor: ->(count, type) { Shared::Values::Period.new(count: count, type: type) }
+
+  composed_of :duration,
+    class_name:  "Shared::Values::Period",
+    mapping:     [ %w[duration_count count], %w[duration_type type] ],
+    constructor: ->(count, type) { Shared::Values::Period.new(count: count, type: type) }
 
   validates :name,           presence: true
   validates :price_cents,    presence: true, numericality: { only_integer: true, greater_than: 0 }

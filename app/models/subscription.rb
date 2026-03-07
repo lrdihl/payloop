@@ -33,9 +33,10 @@ class Subscription < ApplicationRecord
     return nil if closed_at.nil?
 
     days_remaining = (closed_at - Date.current).to_i
-    return 0 if days_remaining <= 0
+    return Shared::Values::Money.new(cents: 0, currency: plan.price.currency) if days_remaining <= 0
 
     days_period = (closed_at - joined_at).to_i
-    (plan.price_cents * days_remaining.to_f / days_period).round
+    residual_cents = (plan.price.cents * days_remaining.to_f / days_period).round
+    Shared::Values::Money.new(cents: residual_cents, currency: plan.price.currency)
   end
 end
