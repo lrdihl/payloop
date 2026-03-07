@@ -40,7 +40,7 @@ RSpec.describe Subscription, type: :model do
     end
 
     it "rejeita valor desconhecido" do
-      subscription.payment_method = "pix"
+      subscription.payment_method = "xpto"
       expect(subscription).not_to be_valid
       expect(subscription.errors[:payment_method]).to be_present
     end
