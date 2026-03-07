@@ -63,17 +63,17 @@ RSpec.describe WebhookAuthentication, type: :controller do
       end
     end
 
-    context "com token Bearer válido" do
+    context "com token Bearer válido no X-Signature" do
       it "permite o acesso (200)" do
-        request.headers["HTTP_AUTHORIZATION"] = "Bearer valid-token-abc"
+        request.headers["X-Signature"] = "Bearer valid-token-abc"
         get :index
         expect(response).to have_http_status(:ok)
       end
     end
 
-    context "com token Token válido" do
+    context "com token Token válido no X-Signature" do
       it "permite o acesso (200)" do
-        request.headers["HTTP_AUTHORIZATION"] = "Token valid-token-abc"
+        request.headers["X-Signature"] = "Token valid-token-abc"
         get :index
         expect(response).to have_http_status(:ok)
       end
@@ -81,7 +81,7 @@ RSpec.describe WebhookAuthentication, type: :controller do
 
     context "com token inválido" do
       it "retorna 401" do
-        request.headers["HTTP_AUTHORIZATION"] = "Bearer errado"
+        request.headers["X-Signature"] = "Bearer errado"
         get :index
         expect(response).to have_http_status(:unauthorized)
       end
