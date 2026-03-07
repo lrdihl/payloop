@@ -1,0 +1,56 @@
+<div class="app-content-header">
+  <div class="container-fluid">
+    <h3 class="mb-0">Minhas Assinaturas</h3>
+  </div>
+</div>
+
+<div class="app-content">
+  <div class="container-fluid">
+    <% unless Subscription.current.exists?(user_id: current_user.id) %>
+      <%= link_to "Nova Assinatura", new_customer_subscription_path, class: "btn btn-primary mb-3" %>
+    <% end %>
+
+    <div class="card">
+      <div class="card-body p-0">
+        <% if @subscriptions.any? %>
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Plano</th>
+                <th>Status</th>
+                <th>Início</th>
+                <th>Próx. Vencimento</th>
+                <th>Encerramento</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @subscriptions.each do |subscription| %>
+                <tr>
+                  <td><%= subscription.plan.name %></td>
+                  <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= subscription.status %></span></td>
+                  <td><%= subscription.joined_at %></td>
+                  <td><%= subscription.next_due_date %></td>
+                  <td><%= subscription.closed_at || "Vitalício" %></td>
+                  <td>
+                    <% if subscription.status == "active" %>
+                      <%= button_to "Cancelar", cancel_customer_subscription_path(subscription),
+                          method: :patch,
+                          class: "btn btn-sm btn-danger",
+                          data: { turbo_confirm: "Confirmar cancelamento?" } %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="p-4 text-center text-muted">
+            <p>Você ainda não possui assinaturas.</p>
+            <%= link_to "Assinar um plano", new_customer_subscription_path, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
