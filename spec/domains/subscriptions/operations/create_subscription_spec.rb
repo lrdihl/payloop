@@ -9,9 +9,10 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
 
   let(:valid_params) do
     {
-      user_id:   user.id,
-      plan_id:   plan.id,
-      joined_at: Date.current
+      user_id:        user.id,
+      plan_id:        plan.id,
+      joined_at:      Date.current,
+      payment_method: "credit_card"
     }
   end
 
