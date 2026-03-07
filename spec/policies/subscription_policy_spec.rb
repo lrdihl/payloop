@@ -21,35 +21,50 @@ RSpec.describe SubscriptionPolicy, type: :policy do
     it { expect(policy.close?).to be true }
   end
 
-  # ─── Customer: acesso negado ──────────────────────────────────────────────────
+  # ─── Customer: acesso parcial ────────────────────────────────────────────────
 
-  describe "customer" do
-    subject(:policy) { described_class.new(customer, subscription) }
+  describe "customer acessando a própria assinatura" do
+    let(:own_subscription) { build(:subscription, user: customer) }
+    subject(:policy) { described_class.new(customer, own_subscription) }
 
-    it { expect(policy.index?).to be false }
-    it { expect(policy.show?).to be false }
-    it { expect(policy.create?).to be false }
+    it { expect(policy.index?).to be true }
+    it { expect(policy.show?).to be true }
+    it { expect(policy.create?).to be true }
+    it { expect(policy.cancel?).to be true }
+    it { expect(policy.close?).to be false }
     it { expect(policy.activate?).to be false }
     it { expect(policy.fail?).to be false }
     it { expect(policy.retry?).to be false }
+  end
+
+  describe "customer acessando assinatura de outro usuário" do
+    subject(:policy) { described_class.new(customer, subscription) }
+
+    it { expect(policy.show?).to be false }
     it { expect(policy.cancel?).to be false }
-    it { expect(policy.close?).to be false }
   end
 
   # ─── Scope ───────────────────────────────────────────────────────────────────
 
   describe "Scope" do
-    let!(:sub1) { create(:subscription) }
-    let!(:sub2) { create(:subscription) }
+    let(:customer_persisted) { create(:user, :customer) }
+    let(:other_customer)     { create(:user, :customer) }
+    let!(:own_sub)   { create(:subscription, user: customer_persisted) }
+    let!(:other_sub) { create(:subscription, user: other_customer) }
 
     it "admin resolve todas as assinaturas" do
       scope = described_class::Scope.new(admin, Subscription).resolve
-      expect(scope).to include(sub1, sub2)
+      expect(scope).to include(own_sub, other_sub)
     end
 
-    it "customer resolve nenhuma assinatura" do
-      scope = described_class::Scope.new(customer, Subscription).resolve
-      expect(scope).to be_empty
+    it "customer resolve apenas suas próprias assinaturas" do
+      scope = described_class::Scope.new(customer_persisted, Subscription).resolve
+      expect(scope).to contain_exactly(own_sub)
+    end
+
+    it "customer não vê assinaturas de outros" do
+      scope = described_class::Scope.new(customer_persisted, Subscription).resolve
+      expect(scope).not_to include(other_sub)
     end
   end
 
