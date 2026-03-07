@@ -27,6 +27,16 @@
           <dt class="col-sm-3">Encerramento</dt>
           <dd class="col-sm-9"><%= @subscription.closed_at || "Vitalício" %></dd>
 
+          <dt class="col-sm-3">Método de Pagamento</dt>
+          <dd class="col-sm-9">
+            <% if @subscription.payment_method.present? %>
+              <% pm = Shared::PaymentMethods::Registry.find(@subscription.payment_method.to_sym) rescue nil %>
+              <%= pm ? pm.new.human_name : @subscription.payment_method %>
+            <% else %>
+              <span class="text-muted">Não definido</span>
+            <% end %>
+          </dd>
+
           <% if @subscription.canceled_at %>
             <dt class="col-sm-3">Cancelado em</dt>
             <dd class="col-sm-9"><%= @subscription.canceled_at %></dd>
@@ -56,6 +66,23 @@
       <% if @subscription.valid_transition?("closed") %>
         <%= button_to "Encerrar", close_admin_subscription_path(@subscription), method: :patch, class: "btn btn-secondary" %>
       <% end %>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header">Método de Pagamento</div>
+      <div class="card-body">
+        <%= form_with url: update_payment_method_admin_subscription_path(@subscription), method: :patch do |f| %>
+          <div class="d-flex gap-2 align-items-end">
+            <div class="flex-grow-1">
+              <%= f.select :payment_method,
+                  Shared::PaymentMethods::Registry.active_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
+                  { selected: @subscription.payment_method },
+                  { name: "subscription[payment_method]", class: "form-select" } %>
+            </div>
+            <%= f.submit "Atualizar", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
     </div>
 
     <div class="mt-3">

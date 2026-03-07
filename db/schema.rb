@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_151738) do
+  create_table "payments", force: :cascade do |t|
+    t.integer "amount_cents"
+    t.integer "attempt_number"
+    t.datetime "created_at", null: false
+    t.string "currency"
+    t.text "gateway_response"
+    t.string "payment_method"
+    t.string "status"
+    t.integer "subscription_id", null: false
+    t.string "transaction_id"
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_payments_on_status"
+    t.index ["subscription_id", "attempt_number"], name: "index_payments_on_subscription_id_and_attempt_number"
+    t.index ["subscription_id"], name: "index_payments_on_subscription_id"
+  end
+
   create_table "plans", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -45,6 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
     t.datetime "created_at", null: false
     t.date "joined_at", null: false
     t.date "next_due_date", null: false
+    t.string "payment_method"
     t.integer "plan_id", null: false
     t.string "status", default: "pending_payment", null: false
     t.datetime "updated_at", null: false
@@ -84,6 +101,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  create_table "webhook_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at"
+    t.string "token"
+    t.datetime "updated_at", null: false
+    t.string "webhook"
+    t.index ["token"], name: "index_webhook_tokens_on_token", unique: true
+    t.index ["webhook", "token"], name: "index_webhook_tokens_on_webhook_and_token"
+  end
+
+  add_foreign_key "payments", "subscriptions"
   add_foreign_key "profiles", "users"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "users"

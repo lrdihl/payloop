@@ -19,6 +19,7 @@ RSpec.describe SubscriptionPolicy, type: :policy do
     it { expect(policy.retry?).to be true }
     it { expect(policy.cancel?).to be true }
     it { expect(policy.close?).to be true }
+    it { expect(policy.update_payment_method?).to be true }
   end
 
   # ─── Customer: acesso parcial ────────────────────────────────────────────────
@@ -35,6 +36,24 @@ RSpec.describe SubscriptionPolicy, type: :policy do
     it { expect(policy.activate?).to be false }
     it { expect(policy.fail?).to be false }
     it { expect(policy.retry?).to be false }
+
+    context "com status não-terminal (pending_payment, error_payment, active)" do
+      %i[pending_payment error_payment active].each do |status|
+        it "permite update_payment_method? quando status é #{status}" do
+          own_subscription.status = status
+          expect(policy.update_payment_method?).to be true
+        end
+      end
+    end
+
+    context "com status terminal (canceled, closed)" do
+      %i[canceled closed].each do |status|
+        it "nega update_payment_method? quando status é #{status}" do
+          own_subscription.status = status
+          expect(policy.update_payment_method?).to be false
+        end
+      end
+    end
   end
 
   describe "customer acessando assinatura de outro usuário" do
@@ -42,6 +61,7 @@ RSpec.describe SubscriptionPolicy, type: :policy do
 
     it { expect(policy.show?).to be false }
     it { expect(policy.cancel?).to be false }
+    it { expect(policy.update_payment_method?).to be false }
   end
 
   # ─── Scope ───────────────────────────────────────────────────────────────────

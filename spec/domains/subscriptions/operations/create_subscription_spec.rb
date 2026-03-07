@@ -9,9 +9,10 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
 
   let(:valid_params) do
     {
-      user_id:   user.id,
-      plan_id:   plan.id,
-      joined_at: Date.current
+      user_id:        user.id,
+      plan_id:        plan.id,
+      joined_at:      Date.current,
+      payment_method: "credit_card"
     }
   end
 
@@ -106,6 +107,29 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
       result = operation.call(valid_params.merge(plan_id: outro_plano.id))
       expect(result).to be_failure
       expect(result.failure[:type]).to eq(:conflict)
+    end
+  end
+
+  # ─── Enqueue do BillingJob ──────────────────────────────────────────────────
+
+  describe "enfileiramento do BillingJob" do
+    include ActiveJob::TestHelper
+
+    it "enfileira BillingJob após criar a subscription" do
+      expect {
+        operation.call(valid_params)
+      }.to have_enqueued_job(Billing::Jobs::BillingJob)
+    end
+
+    it "enfileira BillingJob com o id da subscription criada" do
+      operation.call(valid_params)
+      expect(enqueued_jobs.last[:args]).to include(Subscription.last.id)
+    end
+
+    it "não enfileira BillingJob quando a operação falha" do
+      expect {
+        operation.call(valid_params.except(:user_id))
+      }.not_to have_enqueued_job(Billing::Jobs::BillingJob)
     end
   end
 

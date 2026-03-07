@@ -21,6 +21,27 @@ RSpec.describe Subscriptions::Operations::RetrySubscription do
     end
   end
 
+  # ─── Enqueue do BillingJob ──────────────────────────────────────────────────
+
+  describe "enfileiramento do BillingJob" do
+    include ActiveJob::TestHelper
+
+    let(:subscription) { create(:subscription, :error_payment) }
+
+    it "enfileira BillingJob após mover para pending_payment" do
+      expect {
+        operation.call(subscription)
+      }.to have_enqueued_job(Billing::Jobs::BillingJob).with(subscription.id)
+    end
+
+    it "não enfileira BillingJob quando a transição é inválida" do
+      sub = create(:subscription, :active)
+      expect {
+        operation.call(sub)
+      }.not_to have_enqueued_job(Billing::Jobs::BillingJob)
+    end
+  end
+
   # ─── Transição inválida ──────────────────────────────────────────────────────
 
   describe "com transição inválida" do

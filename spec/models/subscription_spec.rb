@@ -22,6 +22,38 @@ RSpec.describe Subscription, type: :model do
 
     it { is_expected.to validate_presence_of(:joined_at) }
     it { is_expected.to validate_presence_of(:next_due_date) }
+    it { is_expected.to validate_presence_of(:payment_method) }
+  end
+
+  describe "payment_method" do
+    let(:valid_keys) { Shared::PaymentMethods::Registry.all.keys.map(&:to_s) }
+
+    subject(:subscription) do
+      build(:subscription, payment_method: "credit_card")
+    end
+
+    it "aceita cada chave registrada no Registry" do
+      valid_keys.each do |key|
+        subscription.payment_method = key
+        expect(subscription).to be_valid, "esperava que '#{key}' fosse válido"
+      end
+    end
+
+    it "rejeita valor desconhecido" do
+      subscription.payment_method = "xpto"
+      expect(subscription).not_to be_valid
+      expect(subscription.errors[:payment_method]).to be_present
+    end
+
+    it "rejeita nil" do
+      subscription.payment_method = nil
+      expect(subscription).not_to be_valid
+    end
+
+    it "rejeita string vazia" do
+      subscription.payment_method = ""
+      expect(subscription).not_to be_valid
+    end
   end
 
   describe "enum status" do

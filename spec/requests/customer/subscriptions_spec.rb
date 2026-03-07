@@ -57,7 +57,7 @@ RSpec.describe "Customer::Subscriptions", type: :request do
   # ─── POST /customer/subscriptions ────────────────────────────────────────────
 
   describe "POST /customer/subscriptions" do
-    let(:valid_params) { { subscription: { plan_id: plan.id } } }
+    let(:valid_params) { { subscription: { plan_id: plan.id, payment_method: "credit_card" } } }
 
     it "cria assinatura e redireciona para index" do
       post customer_subscriptions_path, params: valid_params
@@ -77,7 +77,7 @@ RSpec.describe "Customer::Subscriptions", type: :request do
 
     context "com dados inválidos (sem plan_id)" do
       it "retorna 422" do
-        post customer_subscriptions_path, params: { subscription: { plan_id: "" } }
+        post customer_subscriptions_path, params: { subscription: { plan_id: "", payment_method: "credit_card" } }
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -89,6 +89,58 @@ RSpec.describe "Customer::Subscriptions", type: :request do
         expect {
           post customer_subscriptions_path, params: valid_params
         }.not_to change(Subscription, :count)
+      end
+    end
+  end
+
+  # ─── PATCH /customer/subscriptions/:id/update_payment_method ────────────────
+
+  describe "PATCH /customer/subscriptions/:id/update_payment_method" do
+    let(:subscription) { create(:subscription, user: customer, plan:, payment_method: "credit_card") }
+
+    it "redireciona após atualizar" do
+      patch update_payment_method_customer_subscription_path(subscription),
+            params: { subscription: { payment_method: "boleto" } }
+      expect(response).to redirect_to(customer_subscriptions_path)
+    end
+
+    it "atualiza o payment_method" do
+      patch update_payment_method_customer_subscription_path(subscription),
+            params: { subscription: { payment_method: "boleto" } }
+      expect(subscription.reload.payment_method).to eq("boleto")
+    end
+
+    context "com método inválido" do
+      it "retorna 422" do
+        patch update_payment_method_customer_subscription_path(subscription),
+              params: { subscription: { payment_method: "xpto" } }
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    context "com assinatura de outro customer" do
+      let(:other_subscription) { create(:subscription, plan:, payment_method: "credit_card") }
+
+      it "redireciona com alerta (não autorizado)" do
+        patch update_payment_method_customer_subscription_path(other_subscription),
+              params: { subscription: { payment_method: "boleto" } }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it "não altera o payment_method" do
+        patch update_payment_method_customer_subscription_path(other_subscription),
+              params: { subscription: { payment_method: "boleto" } }
+        expect(other_subscription.reload.payment_method).to eq("credit_card")
+      end
+    end
+
+    context "com assinatura em status terminal (canceled)" do
+      let(:canceled_sub) { create(:subscription, :canceled, user: customer, plan:, payment_method: "credit_card") }
+
+      it "redireciona com alerta (não autorizado)" do
+        patch update_payment_method_customer_subscription_path(canceled_sub),
+              params: { subscription: { payment_method: "boleto" } }
+        expect(response).to have_http_status(:redirect)
       end
     end
   end

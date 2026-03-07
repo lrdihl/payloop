@@ -27,15 +27,21 @@ Rails.application.routes.draw do
         patch :retry
         patch :cancel
         patch :close
+        patch :update_payment_method
       end
     end
     root to: "dashboard#index"
+  end
+
+  namespace :webhooks do
+    resources :gateway_callbacks, only: [ :create ]
   end
 
   namespace :customer do
     resources :subscriptions, only: %i[index new create] do
       member do
         patch :cancel
+        patch :update_payment_method
       end
     end
     resource :profile, only: %i[show edit update]

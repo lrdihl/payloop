@@ -11,7 +11,7 @@ RSpec.describe Shared::PaymentMethods::Base do
 
   describe "#process" do
     it "levanta NotImplementedError" do
-      expect { base.process(money: double) }.to raise_error(NotImplementedError)
+      expect { base.process(payment: double) }.to raise_error(NotImplementedError)
     end
   end
 end

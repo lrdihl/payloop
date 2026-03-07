@@ -5,7 +5,7 @@ module Customer
     layout "admin"
 
     before_action :require_customer!
-    before_action :set_subscription, only: %i[cancel]
+    before_action :set_subscription, only: %i[cancel update_payment_method]
 
     def index
       authorize Subscription
@@ -26,9 +26,10 @@ module Customer
       authorize Subscription
 
       result = Subscriptions::Operations::CreateSubscription.new.call(
-        user_id:   current_user.id,
-        plan_id:   subscription_params[:plan_id],
-        joined_at: Date.current
+        user_id:        current_user.id,
+        plan_id:        subscription_params[:plan_id],
+        payment_method: subscription_params[:payment_method],
+        joined_at:      Date.current
       )
 
       handle_result(result) do |_subscription|
@@ -50,6 +51,19 @@ module Customer
       end
     end
 
+    def update_payment_method
+      authorize @subscription, :update_payment_method?
+
+      result = Subscriptions::Operations::UpdatePaymentMethod.new.call(
+        subscription:   @subscription,
+        payment_method: params.dig(:subscription, :payment_method)
+      )
+
+      handle_result(result) do |_subscription|
+        redirect_to customer_subscriptions_path, notice: "Método de pagamento atualizado."
+      end
+    end
+
     private
 
     def require_customer!
@@ -66,7 +80,7 @@ module Customer
     end
 
     def subscription_params
-      params.require(:subscription).permit(:plan_id).to_h.deep_symbolize_keys
+      params.require(:subscription).permit(:plan_id, :payment_method).to_h.deep_symbolize_keys
     end
 
     def action_for_failure

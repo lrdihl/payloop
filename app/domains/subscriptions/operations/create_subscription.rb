@@ -42,15 +42,17 @@ module Subscriptions
 
       def persist(input)
         subscription = Subscription.new(
-          user_id:      input[:user_id],
-          plan:         input[:plan],
-          status:       :pending_payment,
-          joined_at:    input[:joined_at],
-          next_due_date: input[:joined_at],
-          closed_at:    input[:closed_at]
+          user_id:        input[:user_id],
+          plan:           input[:plan],
+          status:         :pending_payment,
+          payment_method: input[:payment_method],
+          joined_at:      input[:joined_at],
+          next_due_date:  input[:joined_at],
+          closed_at:      input[:closed_at]
         )
 
         if subscription.save
+          Billing::Jobs::BillingJob.perform_later(subscription.id)
           Dry::Monads::Success(subscription)
         else
           Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
