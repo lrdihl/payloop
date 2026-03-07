@@ -1,6 +1,13 @@
 pt-BR:
   app_name: "Payloop"
 
+  date:
+    formats:
+      month_year: "%m/%Y"
+  time:
+    formats:
+      month_year: "%m/%Y"
+
   shared:
     errors:
       header: "Por favor, corrija os erros abaixo:"
@@ -18,6 +25,10 @@ pt-BR:
       error_payment: "Erro no Pagamento"
       canceled: "Cancelada"
       closed: "Encerrada"
+    payment_statuses:
+      pending: "Pendente"
+      succeeded: "Aprovado"
+      failed: "Falhou"
 
   flash:
     unauthorized: "Você não tem permissão para realizar esta ação."
@@ -41,6 +52,7 @@ pt-BR:
       invalid_transition: "Transição inválida: %{message}"
       not_found: "Assinatura não encontrada."
       already_active: "Você já possui uma assinatura ativa ou pendente."
+      charge_queued: "Cobrança enfileirada com sucesso."
     profiles:
       updated: "Perfil atualizado com sucesso."
 
@@ -68,6 +80,31 @@ pt-BR:
         title: "Editar Usuário"
       form:
         submit: "Salvar Usuário"
+
+    dashboard:
+      index:
+        title: "Painel Administrativo"
+        billing_chart:
+          title: "Faturamento (últimos 5 meses)"
+        active_subscriptions:
+          title: "Assinaturas Ativas"
+          label: "assinaturas"
+        pending_section:
+          title: "Assinaturas com Pagamento Pendente"
+          empty: "Nenhuma assinatura com pagamento pendente."
+          columns:
+            client: "Cliente"
+            plan: "Plano"
+            due_date: "Vencimento"
+          payments_columns:
+            id: "#"
+            date: "Data"
+            amount: "Valor"
+            method: "Método"
+            attempt: "Tentativa"
+            status: "Status"
+            actions: "Ações"
+          reprocess: "Reprocessar"
 
     plans:
       index:

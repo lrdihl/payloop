@@ -10,6 +10,7 @@ class SubscriptionPolicy < ApplicationPolicy
   def retry?                   = user.admin?
   def close?                  = user.admin?
   def update_payment_method?  = user.admin? || (own? && non_terminal?)
+  def charge?                 = user.admin?
 
   class Scope < ApplicationPolicy::Scope
     def resolve

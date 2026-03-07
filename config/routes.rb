@@ -28,6 +28,7 @@ Rails.application.routes.draw do
         patch :cancel
         patch :close
         patch :update_payment_method
+        patch :charge
       end
     end
     root to: "dashboard#index"

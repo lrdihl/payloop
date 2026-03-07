@@ -4,7 +4,7 @@ module Admin
 
     layout "admin"
 
-    before_action :set_subscription, only: %i[show activate fail retry cancel close update_payment_method]
+    before_action :set_subscription, only: %i[show activate fail retry cancel close update_payment_method charge]
 
     def index
       authorize Subscription
@@ -53,6 +53,12 @@ module Admin
     def close
       authorize @subscription, :close?
       handle_transition(Subscriptions::Operations::CloseSubscription.new.call(@subscription))
+    end
+
+    def charge
+      authorize @subscription, :charge?
+      Billing::Jobs::BillingJob.perform_later(@subscription.id)
+      redirect_to admin_root_path, notice: t("controllers.subscriptions.charge_queued")
     end
 
     def update_payment_method
