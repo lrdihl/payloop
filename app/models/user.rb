@@ -9,6 +9,7 @@
 # Casos de uso pertencem aos domain operations em app/domains/identity/operations/
 #
 class User < ApplicationRecord
+  # 1. Modules
   include Pundit::Authorization
 
   devise :database_authenticatable,
@@ -20,15 +21,17 @@ class User < ApplicationRecord
          :lockable,
          :trackable
 
-  enum :role, { customer: 0, admin: 1 }, default: :customer
-
-  has_one :profile, dependent: :destroy
+  # 3. Associations
+  has_one  :profile,       dependent: :destroy
   has_many :subscriptions, dependent: :destroy
 
-  # Delegações para evitar Law of Demeter nos controllers/views
+  # 4. Field settings
   delegate :full_name, :document, :phone, to: :profile, allow_nil: true
 
-  # Guard semântico — evita `user.role == "admin"` espalhado no código
+  enum :role, { customer: 0, admin: 1 }, default: :customer
+
+  # 12. Public Instance Methods
+
   def admin?
     role == "admin"
   end

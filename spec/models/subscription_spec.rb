@@ -79,8 +79,8 @@ RSpec.describe Subscription, type: :model do
       expect(transitions["error_payment"]).to match_array(%w[pending_payment canceled])
     end
 
-    it "active pode ir para canceled e closed" do
-      expect(transitions["active"]).to match_array(%w[canceled closed])
+    it "active pode ir para canceled, closed e pending_payment" do
+      expect(transitions["active"]).to match_array(%w[canceled closed pending_payment])
     end
 
     it "canceled não pode transitar para nenhum estado" do
@@ -174,19 +174,20 @@ RSpec.describe Subscription, type: :model do
         )
       end
 
-      it "retorna valor proporcional aos dias restantes" do
+      it "retorna Money com valor proporcional aos dias restantes" do
         travel_to Date.new(2026, 1, 16) do
           days_remaining = (closed_at - Date.current).to_i
           days_period    = (closed_at - joined_at).to_i
-          expected       = (plan.price_cents * days_remaining.to_f / days_period).round
+          expected_cents = (plan.price_cents * days_remaining.to_f / days_period).round
+          expected       = Shared::Values::Money.new(cents: expected_cents, currency: plan.currency)
 
           expect(subscription.residual_value).to eq(expected)
         end
       end
 
-      it "retorna 0 quando Date.current >= closed_at" do
+      it "retorna Money com cents 0 quando Date.current >= closed_at" do
         travel_to closed_at do
-          expect(subscription.residual_value).to eq(0)
+          expect(subscription.residual_value).to eq(Shared::Values::Money.new(cents: 0, currency: plan.currency))
         end
       end
     end

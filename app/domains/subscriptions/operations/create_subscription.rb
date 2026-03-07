@@ -31,12 +31,11 @@ module Subscriptions
       end
 
       def calculate_dates(input)
-        plan   = Plan.find(input[:plan_id])
-        period = Shared::Values::Period.new(count: plan.duration_count, type: plan.duration_type)
+        plan = Plan.find(input[:plan_id])
 
         Dry::Monads::Success(input.merge(
           plan:      plan,
-          closed_at: period.advance_from(input[:joined_at])
+          closed_at: plan.duration.advance_from(input[:joined_at])
         ))
       end
 
