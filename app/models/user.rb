@@ -23,6 +23,7 @@ class User < ApplicationRecord
   enum :role, { customer: 0, admin: 1 }, default: :customer
 
   has_one :profile, dependent: :destroy
+  has_many :subscriptions, dependent: :destroy
 
   # Delegações para evitar Law of Demeter nos controllers/views
   delegate :full_name, :document, :phone, to: :profile, allow_nil: true

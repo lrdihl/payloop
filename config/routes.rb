@@ -20,7 +20,25 @@ Rails.application.routes.draw do
       end
     end
     resources :plans
-    # Futuros: subscriptions, billing_reports
+    resources :subscriptions, only: %i[index show new create] do
+      member do
+        patch :activate
+        patch :fail
+        patch :retry
+        patch :cancel
+        patch :close
+      end
+    end
+    root to: "dashboard#index"
+  end
+
+  namespace :customer do
+    resources :subscriptions, only: %i[index new create] do
+      member do
+        patch :cancel
+      end
+    end
+    resource :profile, only: %i[show edit update]
     root to: "dashboard#index"
   end
 end

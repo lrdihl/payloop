@@ -1,0 +1,16 @@
+<%= render "shared/errors", errors: @errors if @errors %>
+
+<%= form_with url: customer_subscriptions_path, method: :post do |f| %>
+  <div class="mb-3">
+    <%= f.label :plan_id, "Plano", class: "form-label" %>
+    <%= f.select :plan_id,
+        Plan.kept.active.order(:name).map { |p| ["#{p.name} — #{number_to_currency(p.price_cents.to_f / 100, unit: 'R$', separator: ',', delimiter: '.')}", p.id] },
+        { include_blank: "Selecione um plano" },
+        { name: "subscription[plan_id]", class: "form-select" } %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit "Assinar", class: "btn btn-primary" %>
+    <%= link_to "Cancelar", customer_subscriptions_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

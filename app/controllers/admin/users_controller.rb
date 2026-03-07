@@ -5,7 +5,7 @@
 # responde ao Result. Nenhuma regra de negócio mora aqui.
 #
 module Admin
-  class UsersController < ApplicationController
+  class UsersController < BaseController
     include Dry::Monads[:result]
 
     layout "admin"

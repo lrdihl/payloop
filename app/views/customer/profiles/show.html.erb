@@ -1,0 +1,21 @@
+<div class="app-content-header">
+  <div class="container-fluid">
+    <h3 class="mb-0">Meu Perfil</h3>
+  </div>
+</div>
+
+<div class="app-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Dados Pessoais</h3>
+        <div class="card-tools">
+          <%= link_to "Editar", edit_customer_profile_path, class: "btn btn-sm btn-warning" %>
+        </div>
+      </div>
+      <div class="card-body">
+        <%= render "shared/users/profile_details", user: @user %>
+      </div>
+    </div>
+  </div>
+</div>

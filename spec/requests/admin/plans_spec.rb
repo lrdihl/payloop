@@ -80,7 +80,7 @@ RSpec.describe "Admin::Plans", type: :request do
 
     it "re-renderiza new com dados inválidos" do
       post admin_plans_path, params: { plan: { name: "" } }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe "Admin::Plans", type: :request do
 
     it "re-renderiza edit com dados inválidos" do
       patch admin_plan_path(plan), params: { plan: { name: "" } }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
