@@ -1,13 +1,13 @@
 <div class="app-content-header">
   <div class="container-fluid">
-    <h3 class="mb-0">Minhas Assinaturas</h3>
+    <h3 class="mb-0"><%= t(".title") %></h3>
   </div>
 </div>
 
 <div class="app-content">
   <div class="container-fluid">
     <% unless Subscription.current.exists?(user_id: current_user.id) %>
-      <%= link_to "Nova Assinatura", new_customer_subscription_path, class: "btn btn-primary mb-3" %>
+      <%= link_to t(".new"), new_customer_subscription_path, class: "btn btn-primary mb-3" %>
     <% end %>
 
     <div class="card">
@@ -16,12 +16,12 @@
           <table class="table table-striped mb-0">
             <thead>
               <tr>
-                <th>Plano</th>
-                <th>Status</th>
-                <th>Método de Pagamento</th>
-                <th>Início</th>
-                <th>Próx. Vencimento</th>
-                <th>Encerramento</th>
+                <th><%= t(".columns.plan") %></th>
+                <th><%= t(".columns.status") %></th>
+                <th><%= t(".columns.payment_method") %></th>
+                <th><%= t(".columns.joined_at") %></th>
+                <th><%= t(".columns.next_due") %></th>
+                <th><%= t(".columns.closed_at") %></th>
                 <th></th>
               </tr>
             </thead>
@@ -46,13 +46,13 @@
                   </td>
                   <td><%= subscription.joined_at %></td>
                   <td><%= subscription.next_due_date %></td>
-                  <td><%= subscription.closed_at || "Vitalício" %></td>
+                  <td><%= subscription.closed_at || t(".lifetime") %></td>
                   <td>
                     <% if subscription.status == "active" %>
-                      <%= button_to "Cancelar", cancel_customer_subscription_path(subscription),
+                      <%= button_to t(".cancel_button"), cancel_customer_subscription_path(subscription),
                           method: :patch,
                           class: "btn btn-sm btn-danger",
-                          data: { turbo_confirm: "Confirmar cancelamento?" } %>
+                          data: { turbo_confirm: t("shared.actions.confirm_cancel") } %>
                     <% end %>
                   </td>
                 </tr>
@@ -61,8 +61,8 @@
           </table>
         <% else %>
           <div class="p-4 text-center text-muted">
-            <p>Você ainda não possui assinaturas.</p>
-            <%= link_to "Assinar um plano", new_customer_subscription_path, class: "btn btn-primary" %>
+            <p><%= t(".empty") %></p>
+            <%= link_to t(".subscribe_link"), new_customer_subscription_path, class: "btn btn-primary" %>
           </div>
         <% end %>
       </div>
