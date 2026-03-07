@@ -23,7 +23,7 @@
       <dd class="col-sm-8"><%= @plan.price %></dd>
 
       <dt class="col-sm-4"><%= t(".fields.recurrence") %></dt>
-      <dd class="col-sm-8"><%= format_period(@plan.interval_count, @plan.interval_type) %></dd>
+      <dd class="col-sm-8"><%= @plan.interval %></dd>
 
       <dt class="col-sm-4"><%= t(".fields.status") %></dt>
       <dd class="col-sm-8">

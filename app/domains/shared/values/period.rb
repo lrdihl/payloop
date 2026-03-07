@@ -12,6 +12,13 @@ module Shared
         count.nil? && type.nil?
       end
 
+      def to_s
+        return "—" if lifetime?
+
+        label = I18n.t("shared.interval_types.#{type}", count: count)
+        "#{count}x #{label}"
+      end
+
       def advance_from(date)
         return nil if lifetime?
 

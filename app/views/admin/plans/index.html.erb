@@ -27,7 +27,7 @@
                 <td><%= plan.id %></td>
                 <td><%= plan.name %></td>
                 <td><%= plan.price %></td>
-                <td><%= format_period(plan.interval_count, plan.interval_type) %></td>
+                <td><%= plan.interval %></td>
                 <td>
                   <span class="badge bg-<%= plan.active? ? 'success' : 'secondary' %>">
                     <%= plan.active? ? t(".status.active") : t(".status.inactive") %>

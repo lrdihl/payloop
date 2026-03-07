@@ -20,11 +20,4 @@ module ApplicationHelper
   def payment_status_badge_class(status)
     PAYMENT_STATUS_BADGE.fetch(status.to_s, "bg-secondary")
   end
-
-  def format_period(count, type)
-    return "—" if count.nil? || type.nil?
-
-    label = t("shared.interval_types.#{type}", count: count)
-    "#{count}x #{label}"
-  end
 end
