@@ -1,13 +1,13 @@
-<% content_for :page_title, "Usuário ##{@user.id}" %>
+<% content_for :page_title, t(".title", id: @user.id) %>
 
 <div class="row">
   <div class="col-md-6">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Dados do Usuário</h3>
+        <h3 class="card-title"><%= t(".card_title") %></h3>
         <div class="card-tools">
-          <%= link_to "Editar", edit_admin_user_path(@user), class: "btn btn-sm btn-warning" %>
-          <%= link_to "Voltar", admin_users_path, class: "btn btn-sm btn-secondary" %>
+          <%= link_to t("shared.actions.edit"), edit_admin_user_path(@user), class: "btn btn-sm btn-warning" %>
+          <%= link_to t("shared.actions.back"), admin_users_path, class: "btn btn-sm btn-secondary" %>
         </div>
       </div>
       <div class="card-body">
@@ -24,22 +24,21 @@
     <div class="col-md-6">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Alterar Papel (Role)</h3>
+          <h3 class="card-title"><%= t(".change_role") %></h3>
         </div>
         <div class="card-body">
           <%= form_with url: update_role_admin_user_path(@user), method: :patch do |f| %>
             <div class="mb-3">
-              <%= f.label :role, "Novo papel", class: "form-label" %>
+              <%= f.label :role, t(".new_role_label"), class: "form-label" %>
               <%= f.select :role,
                     [["Customer", "customer"], ["Admin", "admin"]],
                     { selected: @user.role },
                     class: "form-select" %>
             </div>
-            <%= f.submit "Atualizar Role", class: "btn btn-primary" %>
+            <%= f.submit t(".update_role_button"), class: "btn btn-primary" %>
           <% end %>
         </div>
       </div>
     </div>
   <% end %>
 </div>
-
