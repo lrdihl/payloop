@@ -31,4 +31,13 @@ Rails.application.routes.draw do
     end
     root to: "dashboard#index"
   end
+
+  namespace :customer do
+    resources :subscriptions, only: %i[index new create] do
+      member do
+        patch :cancel
+      end
+    end
+    root to: "dashboard#index"
+  end
 end
