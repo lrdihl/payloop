@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_130518) do
   create_table "plans", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -45,6 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_233500) do
     t.datetime "created_at", null: false
     t.date "joined_at", null: false
     t.date "next_due_date", null: false
+    t.string "payment_method"
     t.integer "plan_id", null: false
     t.string "status", default: "pending_payment", null: false
     t.datetime "updated_at", null: false
