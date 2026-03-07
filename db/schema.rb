@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_130518) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_143733) do
   create_table "plans", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -83,6 +83,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130518) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+  end
+
+  create_table "webhook_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at"
+    t.string "token"
+    t.datetime "updated_at", null: false
+    t.string "webhook"
+    t.index ["token"], name: "index_webhook_tokens_on_token", unique: true
+    t.index ["webhook", "token"], name: "index_webhook_tokens_on_webhook_and_token"
   end
 
   add_foreign_key "profiles", "users"
