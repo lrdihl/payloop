@@ -69,9 +69,9 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
     end
   end
 
-  # ─── Falha no step :check_no_active ────────────────────────────────────────
+  # ─── Falha no step :check_no_active (restricao global por usuario) ─────────
 
-  describe "quando o usuário já tem assinatura ativa no mesmo plano" do
+  describe "quando o usuário já tem assinatura ativa" do
     before { create(:subscription, :active, user:, plan:) }
 
     it "retorna Failure com tipo :conflict" do
@@ -83,9 +83,16 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
     it "não cria nova subscription" do
       expect { operation.call(valid_params) }.not_to change(Subscription, :count)
     end
+
+    it "bloqueia mesmo sendo um plano diferente" do
+      outro_plano = create(:plan)
+      result = operation.call(valid_params.merge(plan_id: outro_plano.id))
+      expect(result).to be_failure
+      expect(result.failure[:type]).to eq(:conflict)
+    end
   end
 
-  describe "quando o usuário já tem assinatura pending_payment no mesmo plano" do
+  describe "quando o usuário já tem assinatura pending_payment" do
     before { create(:subscription, user:, plan:) }
 
     it "retorna Failure com tipo :conflict" do
@@ -93,9 +100,16 @@ RSpec.describe Subscriptions::Operations::CreateSubscription do
       expect(result).to be_failure
       expect(result.failure[:type]).to eq(:conflict)
     end
+
+    it "bloqueia mesmo sendo um plano diferente" do
+      outro_plano = create(:plan)
+      result = operation.call(valid_params.merge(plan_id: outro_plano.id))
+      expect(result).to be_failure
+      expect(result.failure[:type]).to eq(:conflict)
+    end
   end
 
-  describe "quando existe apenas assinatura em estado terminal no mesmo plano" do
+  describe "quando existe apenas assinatura em estado terminal" do
     it "permite criar nova assinatura quando existe canceled" do
       create(:subscription, :canceled, user:, plan:)
       result = operation.call(valid_params)
