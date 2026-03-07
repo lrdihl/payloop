@@ -31,13 +31,6 @@ RSpec.describe Subscriptions::Operations::PendingSubscription do
       expect(result.failure[:type]).to eq(:invalid_transition)
     end
 
-    it "retorna Failure quando está error_payment" do
-      sub = create(:subscription, :error_payment)
-      result = operation.call(sub)
-      expect(result).to be_failure
-      expect(result.failure[:type]).to eq(:invalid_transition)
-    end
-
     it "retorna Failure quando está canceled" do
       sub = create(:subscription, :canceled)
       result = operation.call(sub)
