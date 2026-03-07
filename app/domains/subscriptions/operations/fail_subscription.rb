@@ -12,7 +12,7 @@ module Subscriptions
         if subscription.valid_transition?("error_payment")
           Dry::Monads::Success(subscription)
         else
-          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: ["transição inválida: #{subscription.status} -> error_payment"] } })
+          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: [ "transição inválida: #{subscription.status} -> error_payment" ] } })
         end
       end
 

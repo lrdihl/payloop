@@ -24,7 +24,7 @@ module Subscriptions
         conflict = Subscription.current.exists?(user_id: input[:user_id])
 
         if conflict
-          Dry::Monads::Failure({ type: :conflict, errors: { base: ["já existe uma assinatura ativa ou pendente"] } })
+          Dry::Monads::Failure({ type: :conflict, errors: { base: [ "já existe uma assinatura ativa ou pendente" ] } })
         else
           Dry::Monads::Success(input)
         end

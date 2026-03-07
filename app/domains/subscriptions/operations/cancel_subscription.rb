@@ -12,7 +12,7 @@ module Subscriptions
         if subscription.valid_transition?("canceled")
           Dry::Monads::Success(subscription)
         else
-          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: ["transição inválida: #{subscription.status} -> canceled"] } })
+          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: [ "transição inválida: #{subscription.status} -> canceled" ] } })
         end
       end
 
