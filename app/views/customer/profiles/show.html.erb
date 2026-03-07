@@ -1,6 +1,6 @@
 <div class="app-content-header">
   <div class="container-fluid">
-    <h3 class="mb-0">Meu Perfil</h3>
+    <h3 class="mb-0"><%= t(".title") %></h3>
   </div>
 </div>
 
@@ -8,9 +8,9 @@
   <div class="container-fluid">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Dados Pessoais</h3>
+        <h3 class="card-title"><%= t(".card_title") %></h3>
         <div class="card-tools">
-          <%= link_to "Editar", edit_customer_profile_path, class: "btn btn-sm btn-warning" %>
+          <%= link_to t("shared.actions.edit"), edit_customer_profile_path, class: "btn btn-sm btn-warning" %>
         </div>
       </div>
       <div class="card-body">
