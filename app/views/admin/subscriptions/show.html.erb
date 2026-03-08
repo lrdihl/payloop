@@ -19,13 +19,13 @@
           <dd class="col-sm-9"><span class="badge <%= status_badge_class(@subscription.status) %>"><%= t("shared.subscription_statuses.#{@subscription.status}") %></span></dd>
 
           <dt class="col-sm-3"><%= t(".fields.joined_at") %></dt>
-          <dd class="col-sm-9"><%= @subscription.joined_at %></dd>
+          <dd class="col-sm-9"><%= l(@subscription.joined_at) %></dd>
 
           <dt class="col-sm-3"><%= t(".fields.next_due") %></dt>
-          <dd class="col-sm-9"><%= @subscription.next_due_date %></dd>
+          <dd class="col-sm-9"><%= l(@subscription.next_due_date) %></dd>
 
           <dt class="col-sm-3"><%= t(".fields.closed_at") %></dt>
-          <dd class="col-sm-9"><%= @subscription.closed_at || t(".lifetime") %></dd>
+          <dd class="col-sm-9"><%= @subscription.closed_at ? l(@subscription.closed_at) : t(".lifetime") %></dd>
 
           <dt class="col-sm-3"><%= t(".fields.payment_method") %></dt>
           <dd class="col-sm-9">
@@ -38,7 +38,7 @@
 
           <% if @subscription.canceled_at %>
             <dt class="col-sm-3"><%= t(".fields.canceled_at") %></dt>
-            <dd class="col-sm-9"><%= @subscription.canceled_at %></dd>
+            <dd class="col-sm-9"><%= l(@subscription.canceled_at) %></dd>
           <% end %>
 
           <% if %w[active error_payment].include?(@subscription.status) && @subscription.closed_at %>

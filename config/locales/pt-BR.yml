@@ -3,9 +3,11 @@ pt-BR:
 
   date:
     formats:
+      default: "%d/%m/%Y"
       month_year: "%m/%Y"
   time:
     formats:
+      default: "%d/%m/%Y %H:%M"
       month_year: "%m/%Y"
 
   shared:

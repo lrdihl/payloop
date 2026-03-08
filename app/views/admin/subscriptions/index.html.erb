@@ -31,8 +31,8 @@
                 <td><%= subscription.plan.name %></td>
                 <td class="text-end"><%= subscription.plan.price %></td>
                 <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= t("shared.subscription_statuses.#{subscription.status}") %></span></td>
-                <td><%= subscription.next_due_date %></td>
-                <td><%= subscription.closed_at || t(".lifetime") %></td>
+                <td><%= l(subscription.next_due_date) %></td>
+                <td><%= subscription.closed_at ? l(subscription.closed_at) : t(".lifetime") %></td>
                 <td><%= link_to "Ver", admin_subscription_path(subscription), class: "btn btn-sm btn-outline-secondary" %></td>
               </tr>
             <% end %>

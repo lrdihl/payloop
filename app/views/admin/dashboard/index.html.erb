@@ -72,7 +72,7 @@
                   </td>
                   <td><%= sub.user.email %></td>
                   <td><%= sub.plan.name %></td>
-                  <td><%= sub.next_due_date.strftime("%d/%m/%Y") %></td>
+                  <td><%= l(sub.next_due_date) %></td>
                   <td class="text-end">
                     <%= button_to t(".pending_section.reprocess"),
                           charge_admin_subscription_path(sub),
@@ -106,7 +106,7 @@
                             <% sorted_payments.each do |payment| %>
                               <tr>
                                 <td><%= payment.id %></td>
-                                <td><%= payment.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                                <td><%= l(payment.created_at) %></td>
                                 <td><%= payment.amount %></td>
                                 <td><%= payment_method_name(payment.payment_method) %></td>
                                 <td class="text-center"><%= payment.attempt_number %></td>

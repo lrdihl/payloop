@@ -43,9 +43,9 @@
                       <%= payment_method_name(subscription.payment_method) %>
                     <% end %>
                   </td>
-                  <td><%= subscription.joined_at %></td>
-                  <td><%= subscription.next_due_date %></td>
-                  <td><%= subscription.closed_at || t(".lifetime") %></td>
+                  <td><%= l(subscription.joined_at) %></td>
+                  <td><%= l(subscription.next_due_date) %></td>
+                  <td><%= subscription.closed_at ? l(subscription.closed_at) : t(".lifetime") %></td>
                   <td>
                     <% if subscription.status == "active" %>
                       <%= button_to t(".cancel_button"), cancel_customer_subscription_path(subscription),
