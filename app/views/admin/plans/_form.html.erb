@@ -31,7 +31,9 @@
 
     <div class="col-md-6 mb-3">
       <%= label_tag :interval_type, t("admin.plans.form.interval_type"), class: "form-label" %>
-      <%= select_tag "plan[interval_type]", options_for_select(Plan::INTERVAL_TYPES, @plan.interval_type), class: "form-select" %>
+      <%= select_tag "plan[interval_type]",
+            options_for_select(Plan::INTERVAL_TYPES.map { |t| [Shared::Values::Period.human_type(t), t] }, @plan.interval_type),
+            class: "form-select" %>
     </div>
   </div>
 
@@ -45,7 +47,7 @@
     <div class="col-md-6 mb-3">
       <%= label_tag :duration_type, t("admin.plans.form.duration_type"), class: "form-label" %>
       <%= select_tag "plan[duration_type]",
-            options_for_select([[t("admin.plans.form.duration_lifetime"), ""]] + Plan::DURATION_TYPES.map { |t| [t.capitalize, t] }, @plan.duration_type),
+            options_for_select([[t("admin.plans.form.duration_lifetime"), ""]] + Plan::DURATION_TYPES.map { |t| [Shared::Values::Period.human_type(t), t] }, @plan.duration_type),
             class: "form-select" %>
     </div>
   </div>

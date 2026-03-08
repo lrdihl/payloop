@@ -3,6 +3,10 @@ module Shared
     class Period
       attr_reader :count, :type
 
+      def self.human_type(type)
+        I18n.t("shared.interval_types.#{type}.one").capitalize
+      end
+
       def initialize(count:, type:)
         @count = count
         @type  = type
