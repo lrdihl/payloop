@@ -3,10 +3,6 @@ module Shared
     class CreditCard < Base
       Registry.register(:credit_card, self)
 
-      def human_name
-        "Cartão de Crédito"
-      end
-
       def process(payment:)
         Rails.logger.info "[Cartão de Crédito] Simulando cobrança de #{payment.amount}"
         payment.transaction_id   = SecureRandom.uuid

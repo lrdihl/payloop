@@ -3,10 +3,6 @@ module Shared
     class BankDeposit < Base
       Registry.register(:bank_deposit, self)
 
-      def human_name
-        "Depósito Bancário"
-      end
-
       def process(payment:)
         Rails.logger.info "[Depósito Bancário] Simulando cobrança de #{payment.amount}"
         payment.transaction_id   = SecureRandom.uuid

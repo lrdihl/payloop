@@ -6,7 +6,8 @@ module Shared
       end
 
       def human_name
-        raise NotImplementedError, "#{self.class}#human_name não implementado"
+        key = self.class.name.demodulize.underscore
+        I18n.t("shared.payment_methods.#{key}")
       end
 
       def process(payment:)

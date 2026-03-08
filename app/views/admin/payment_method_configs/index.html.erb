@@ -20,11 +20,11 @@
             </tr>
           </thead>
           <tbody>
-            <% @methods.each do |key, _klass| %>
+            <% @methods.each do |key, klass| %>
               <% config = @configs[key] %>
               <% active = config&.enabled? %>
               <tr>
-                <td><%= t(".payment_methods.#{key}", default: key.to_s.humanize) %></td>
+                <td><%= klass.new.human_name %></td>
                 <td>
                   <span class="badge bg-<%= active ? 'success' : 'secondary' %>">
                     <%= active ? t(".status.active") : t(".status.inactive") %>
