@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :plan do
-    name           { Faker::Commerce.product_name }
-    description    { Faker::Lorem.sentence }
-    price_cents    { Faker::Number.between(from: 100, to: 99900) }
+    sequence(:name) { |n| "Plano #{n}" }
+    description    { "Descrição do plano" }
+    price_cents    { 4990 }
     currency       { "BRL" }
     interval_count { 1 }
     interval_type  { "month" }

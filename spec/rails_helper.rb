@@ -50,8 +50,6 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
-Faker::Config.locale = 'pt-BR'
-
 RSpec.configure do |config|
   config.before(:each) { I18n.locale = :'pt-BR' }
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
