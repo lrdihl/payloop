@@ -30,8 +30,7 @@
           <dt class="col-sm-3"><%= t(".fields.payment_method") %></dt>
           <dd class="col-sm-9">
             <% if @subscription.payment_method.present? %>
-              <% pm = Shared::PaymentMethods::Registry.find(@subscription.payment_method.to_sym) rescue nil %>
-              <%= pm ? pm.new.human_name : @subscription.payment_method %>
+              <%= payment_method_name(@subscription.payment_method) %>
             <% else %>
               <span class="text-muted"><%= t(".payment_method_undefined") %></span>
             <% end %>

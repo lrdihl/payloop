@@ -14,8 +14,7 @@ module Billing
         return unless subscription.pending_payment?
 
         result = Billing::Operations::ProcessPayment.new.call(
-          subscription:   subscription,
-          attempt_number: [ executions, 1 ].max
+          subscription: subscription
         )
 
         raise Billing::GatewayError, result.failure[:errors].to_s if result.failure?

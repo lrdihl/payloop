@@ -6,8 +6,6 @@
 
 <div class="app-content">
   <div class="container-fluid">
-    <%= render "shared/flash" %>
-
     <%# Linha 1: Gráfico de faturamento + Card de assinaturas ativas %>
     <div class="row mb-4">
 
@@ -110,7 +108,7 @@
                                 <td><%= payment.id %></td>
                                 <td><%= payment.created_at.strftime("%d/%m/%Y %H:%M") %></td>
                                 <td><%= payment.amount %></td>
-                                <td><%= payment.payment_method %></td>
+                                <td><%= payment_method_name(payment.payment_method) %></td>
                                 <td class="text-center"><%= payment.attempt_number %></td>
                                 <td>
                                   <span class="badge <%= payment_status_badge_class(payment.status) %>">

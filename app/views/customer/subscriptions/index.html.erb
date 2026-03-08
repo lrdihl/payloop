@@ -40,8 +40,7 @@
                         <%= f.submit "OK", class: "btn btn-sm btn-outline-primary" %>
                       <% end %>
                     <% else %>
-                      <% pm = Shared::PaymentMethods::Registry.find(subscription.payment_method.to_sym) rescue nil %>
-                      <%= pm ? pm.new.human_name : (subscription.payment_method || "—") %>
+                      <%= payment_method_name(subscription.payment_method) %>
                     <% end %>
                   </td>
                   <td><%= subscription.joined_at %></td>

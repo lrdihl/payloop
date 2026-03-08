@@ -29,6 +29,7 @@ pt-BR:
       pending: "Pendente"
       succeeded: "Aprovado"
       failed: "Falhou"
+      voided: "Substituído"
     interval_types:
       month:
         one: "mês"
@@ -59,7 +60,7 @@ pt-BR:
       invalid_transition: "Transição inválida: %{message}"
       not_found: "Assinatura não encontrada."
       already_active: "Você já possui uma assinatura ativa ou pendente."
-      charge_queued: "Cobrança enfileirada com sucesso."
+      charge_queued: "Cobrança reprocessada com sucesso."
     profiles:
       updated: "Perfil atualizado com sucesso."
 
