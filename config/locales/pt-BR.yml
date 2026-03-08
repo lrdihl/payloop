@@ -56,6 +56,9 @@ pt-BR:
       created: "Plano criado com sucesso."
       updated: "Plano atualizado."
       destroyed: "Plano removido."
+    payment_method_configs:
+      updated: "Método de pagamento atualizado."
+      error:   "Não foi possível atualizar o método de pagamento."
     subscriptions:
       created: "Assinatura criada com sucesso."
       canceled: "Assinatura cancelada."
