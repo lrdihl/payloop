@@ -46,6 +46,47 @@ RSpec.describe Billing::Operations::HandleGatewayCallback do
     end
   end
 
+  # ─── Succeeded com closed_at vencido ─────────────────────────────────────────
+
+  describe "fluxo succeeded com closed_at <= hoje" do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:today) { Date.new(2026, 3, 7) }
+    let(:subscription) { create(:subscription, :active, closed_at: today) }
+
+    before { travel_to today }
+    after  { travel_back }
+
+    it "fecha a subscription (status closed) em vez de ativar" do
+      operation.call(valid_params)
+      expect(subscription.reload.status).to eq("closed")
+    end
+
+    it "atualiza o payment para succeeded" do
+      operation.call(valid_params)
+      expect(payment.reload.status).to eq("succeeded")
+    end
+
+    it "retorna Success" do
+      expect(operation.call(valid_params)).to be_success
+    end
+  end
+
+  describe "fluxo succeeded com closed_at no futuro" do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:today) { Date.new(2026, 3, 7) }
+    let(:subscription) { create(:subscription, :active, closed_at: today + 1.day) }
+
+    before { travel_to today }
+    after  { travel_back }
+
+    it "ativa a subscription normalmente" do
+      operation.call(valid_params)
+      expect(subscription.reload.status).to eq("active")
+    end
+  end
+
   # ─── Fluxo failed ────────────────────────────────────────────────────────────
 
   describe "fluxo failed" do

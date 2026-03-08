@@ -1,6 +1,6 @@
 module Subscriptions
   module Operations
-    class ActivateSubscription
+    class PendingSubscription
       include Dry::Transaction
 
       step :check_transition
@@ -9,17 +9,15 @@ module Subscriptions
       private
 
       def check_transition(subscription)
-        if subscription.valid_transition?("active")
+        if subscription.valid_transition?("pending_payment")
           Dry::Monads::Success(subscription)
         else
-          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: [ "transição inválida: #{subscription.status} -> active" ] } })
+          Dry::Monads::Failure({ type: :invalid_transition, errors: { status: [ "transição inválida: #{subscription.status} -> pending_payment" ] } })
         end
       end
 
       def update_status(subscription)
-        new_next_due_date = subscription.plan.interval.advance_from(subscription.next_due_date)
-
-        if subscription.update(status: :active, next_due_date: new_next_due_date)
+        if subscription.update(status: :pending_payment)
           Dry::Monads::Success(subscription)
         else
           Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })

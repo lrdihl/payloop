@@ -2,14 +2,16 @@ class Subscription < ApplicationRecord
   VALID_TRANSITIONS = {
     "pending_payment" => %w[active error_payment],
     "error_payment"   => %w[pending_payment canceled],
-    "active"          => %w[canceled closed],
+    "active"          => %w[canceled closed pending_payment],
     "canceled"        => [],
     "closed"          => []
   }.freeze
 
-  belongs_to :user
+  # 3. Associations
   belongs_to :plan
+  belongs_to :user
 
+  # 4. Field settings
   enum :status, {
     pending_payment: "pending_payment",
     active:          "active",
@@ -18,12 +20,16 @@ class Subscription < ApplicationRecord
     closed:          "closed"
   }, default: :pending_payment
 
-  validates :joined_at,       presence: true
-  validates :next_due_date,   presence: true
-  validates :payment_method,  presence: true,
-                              inclusion: { in: ->(_) { Shared::PaymentMethods::Registry.all.keys.map(&:to_s) } }
+  # 5. Validations
+  validates :joined_at,      presence: true
+  validates :next_due_date,  presence: true
+  validates :payment_method, presence: true,
+                             inclusion: { in: ->(_) { Shared::PaymentMethods::Registry.all.keys.map(&:to_s) } }
 
+  # 7. Scopes
   scope :current, -> { where(status: %w[active pending_payment]) }
+
+  # 12. Public Instance Methods
 
   def valid_transition?(new_status)
     VALID_TRANSITIONS[status].include?(new_status.to_s)
@@ -33,9 +39,10 @@ class Subscription < ApplicationRecord
     return nil if closed_at.nil?
 
     days_remaining = (closed_at - Date.current).to_i
-    return 0 if days_remaining <= 0
+    return Shared::Values::Money.new(cents: 0, currency: plan.price.currency) if days_remaining <= 0
 
-    days_period = (closed_at - joined_at).to_i
-    (plan.price_cents * days_remaining.to_f / days_period).round
+    days_period    = (closed_at - joined_at).to_i
+    residual_cents = (plan.price.cents * days_remaining.to_f / days_period).round
+    Shared::Values::Money.new(cents: residual_cents, currency: plan.price.currency)
   end
 end

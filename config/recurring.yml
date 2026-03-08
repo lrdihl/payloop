@@ -1,0 +1,10 @@
+production:
+  close_subscriptions:
+    class: Billing::Jobs::CloseSubscriptionsJob
+    schedule: "0 0 * * *"
+    description: "Fecha assinaturas cujo closed_at é igual à data atual"
+
+  charge_subscriptions:
+    class: Billing::Jobs::ChargeSubscriptionsJob
+    schedule: "10 0 * * *"
+    description: "Inicia cobrança de assinaturas cujo next_due_date é igual à data atual"
