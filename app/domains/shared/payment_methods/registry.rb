@@ -33,6 +33,10 @@ module Shared
       def self.active_methods
         @methods.select { |key, _| @status[key] }
       end
+
+      def self.selectable_methods
+        @methods.select { |key, klass| @status[key] && klass.selectable? }
+      end
     end
   end
 end

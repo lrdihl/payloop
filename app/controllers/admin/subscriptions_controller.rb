@@ -32,7 +32,7 @@ module Admin
 
     def activate
       authorize @subscription, :activate?
-      handle_transition(Subscriptions::Operations::ActivateSubscription.new.call(@subscription))
+      handle_transition(Billing::Operations::RegisterManualPayment.new.call(@subscription))
     end
 
     def fail

@@ -12,7 +12,7 @@
   <div class="mb-3">
     <%= f.label :payment_method, t("customer.subscriptions.form.payment_method"), class: "form-label" %>
     <%= f.select :payment_method,
-        Shared::PaymentMethods::Registry.active_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
+        Shared::PaymentMethods::Registry.selectable_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
         { include_blank: t("customer.subscriptions.form.payment_method_blank") },
         { name: "subscription[payment_method]", class: "form-select" } %>
   </div>

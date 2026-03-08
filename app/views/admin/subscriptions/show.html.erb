@@ -32,7 +32,7 @@
             <% if policy(@subscription).update_payment_method? %>
               <%= form_with url: update_payment_method_admin_subscription_path(@subscription), method: :patch, class: "d-flex gap-2 align-items-center" do |f| %>
                 <%= f.select :payment_method,
-                    Shared::PaymentMethods::Registry.active_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
+                    Shared::PaymentMethods::Registry.selectable_methods.map { |key, klass| [klass.new.human_name, key.to_s] },
                     { selected: @subscription.payment_method },
                     { name: "subscription[payment_method]", class: "form-select form-select-sm w-auto" } %>
                 <%= f.submit t(".update_button"), class: "btn btn-sm btn-primary" %>

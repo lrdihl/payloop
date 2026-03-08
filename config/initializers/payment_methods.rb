@@ -4,4 +4,5 @@ Rails.application.config.to_prepare do
   Shared::PaymentMethods::CreditCard
   Shared::PaymentMethods::Boleto
   Shared::PaymentMethods::BankDeposit
+  Shared::PaymentMethods::Manual
 end
