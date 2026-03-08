@@ -29,8 +29,8 @@ RSpec.describe Payment, type: :model do
   end
 
   describe "enum status" do
-    it "define os 3 valores esperados" do
-      expect(described_class.statuses.keys).to match_array(%w[pending succeeded failed])
+    it "define os valores esperados" do
+      expect(described_class.statuses.keys).to match_array(%w[pending succeeded failed voided])
     end
 
     it "default é pending" do

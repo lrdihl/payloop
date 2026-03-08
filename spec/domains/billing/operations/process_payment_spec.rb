@@ -7,7 +7,7 @@ RSpec.describe Billing::Operations::ProcessPayment do
   let(:subscription) { create(:subscription, payment_method: "credit_card") }
 
   let(:valid_input) do
-    { subscription: subscription, attempt_number: 1 }
+    { subscription: subscription }
   end
 
   # ─── Fluxo feliz ─────────────────────────────────────────────────────────────
@@ -86,10 +86,23 @@ RSpec.describe Billing::Operations::ProcessPayment do
 
   # ─── Attempt number ──────────────────────────────────────────────────────────
 
-  describe "com attempt_number 3" do
-    it "registra attempt_number corretamente" do
-      result = operation.call(valid_input.merge(attempt_number: 3))
+  describe "attempt_number calculado pelo histórico" do
+    it "é 1 quando não há pagamentos anteriores" do
+      result = operation.call(valid_input)
+      expect(result.value!.attempt_number).to eq(1)
+    end
+
+    it "é max + 1 quando há pagamentos anteriores" do
+      create(:payment, subscription: subscription, attempt_number: 1, status: :failed)
+      create(:payment, subscription: subscription, attempt_number: 2, status: :voided)
+      result = operation.call(valid_input)
       expect(result.value!.attempt_number).to eq(3)
+    end
+
+    it "anula payments pendentes anteriores antes de criar novo" do
+      pending_payment = create(:payment, subscription: subscription, attempt_number: 1, status: :pending)
+      operation.call(valid_input)
+      expect(pending_payment.reload.status).to eq("voided")
     end
   end
 end
