@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_151738) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_08_011134) do
+  create_table "payment_method_configs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true, null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_payment_method_configs_on_key", unique: true
+  end
+
   create_table "payments", force: :cascade do |t|
     t.integer "amount_cents"
     t.integer "attempt_number"
