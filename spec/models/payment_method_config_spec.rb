@@ -21,7 +21,7 @@ RSpec.describe PaymentMethodConfig, type: :model do
       expect(build(:payment_method_config, key: "manual")).not_to be_valid
     end
 
-    it { is_expected.to validate_inclusion_of(:enabled).in_array([true, false]) }
+    it { is_expected.to validate_inclusion_of(:enabled).in_array([ true, false ]) }
   end
 
   describe "SELECTABLE_KEYS" do

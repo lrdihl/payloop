@@ -4,5 +4,5 @@ class PaymentMethodConfig < ApplicationRecord
   validates :key,     presence: true,
                       uniqueness: true,
                       inclusion: { in: SELECTABLE_KEYS }
-  validates :enabled, inclusion: { in: [true, false] }
+  validates :enabled, inclusion: { in: [ true, false ] }
 end
