@@ -217,6 +217,16 @@ end
 puts "  Nhonho    → nhonho@payloop.dev    (error_payment / failed)"
 
 puts ""
+puts "Criando configurações de métodos de pagamento..."
+
+%w[credit_card boleto bank_deposit].each do |key|
+  PaymentMethodConfig.find_or_create_by!(key: key) do |config|
+    config.enabled = true
+  end
+  puts "  #{key} → ativo"
+end
+
+puts ""
 puts "Demo webhook:"
 puts "  curl -X POST http://localhost:3000/webhooks/gateway_callbacks \\"
 puts "    -H \"X-Signature: #{webhook_token.http_authentication_token}\" \\"
