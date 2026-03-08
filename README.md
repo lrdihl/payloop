@@ -283,6 +283,8 @@ Merge na `main` → GitHub Actions → deploy automático no Render via webhook.
 PR mergeado na main → build Docker (production) → migrations → novo container em produção
 ```
 
+**Ambiente de produção:** https://payloop-k2tq.onrender.com
+
 ### Variáveis de ambiente em produção
 
 | Variável | Origem |
