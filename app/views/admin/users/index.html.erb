@@ -30,7 +30,7 @@
                 <td><%= user.full_name || "—" %></td>
                 <td>
                   <span class="badge bg-<%= user.admin? ? 'danger' : 'secondary' %>">
-                    <%= user.role %>
+                    <%= t("shared.roles.#{user.role}") %>
                   </span>
                 </td>
                 <td>

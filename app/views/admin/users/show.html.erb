@@ -1,7 +1,7 @@
 <% content_for :page_title, t(".title", id: @user.id) %>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-12">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title"><%= t(".card_title") %></h3>
@@ -19,26 +19,4 @@
       </div>
     </div>
   </div>
-
-  <% if policy(@user).update_role? %>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title"><%= t(".change_role") %></h3>
-        </div>
-        <div class="card-body">
-          <%= form_with url: update_role_admin_user_path(@user), method: :patch do |f| %>
-            <div class="mb-3">
-              <%= f.label :role, t(".new_role_label"), class: "form-label" %>
-              <%= f.select :role,
-                    [["Customer", "customer"], ["Admin", "admin"]],
-                    { selected: @user.role },
-                    class: "form-select" %>
-            </div>
-            <%= f.submit t(".update_role_button"), class: "btn btn-primary" %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  <% end %>
 </div>

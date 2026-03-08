@@ -14,9 +14,20 @@
   </div>
 
   <div class="mb-3">
-    <%= f.label :role, t("admin.users.index.columns.role"), class: "form-label" %>
-    <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] },
+    <%= f.label :role, t("shared.roles.label"), class: "form-label" %>
+    <%= f.select :role, User.roles.keys.map { |r| [t("shared.roles.#{r}"), r] },
                  { selected: "customer" }, class: "form-select" %>
+  </div>
+<% elsif current_user.admin? %>
+  <% can_change_role = policy(f.object).update_role? %>
+  <div class="mb-3">
+    <%= f.label :role, t("shared.roles.label"), class: "form-label" %>
+    <%= f.select :role, User.roles.keys.map { |r| [t("shared.roles.#{r}"), r] },
+                 { selected: f.object.role },
+                 class: "form-select", disabled: !can_change_role %>
+    <% unless can_change_role %>
+      <small class="text-muted"><%= t("admin.users.form.role_self_locked") %></small>
+    <% end %>
   </div>
 <% end %>
 

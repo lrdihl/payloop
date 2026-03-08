@@ -45,6 +45,14 @@ module Admin
     def update
       authorize @user
 
+      if params.dig(:user, :role).present? && policy(@user).update_role?
+        role_result = Identity::Operations::UpdateUserRole.new.call(
+          user: @user,
+          role: params[:user][:role]
+        )
+        return handle_result(role_result) { nil } if role_result.failure?
+      end
+
       result = Identity::Operations::UpdateProfile.new.call(
         profile:    @user.profile,
         attributes: profile_params
