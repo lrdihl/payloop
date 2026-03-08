@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       end
     end
     resources :plans
+    resources :payment_method_configs, only: %i[index] do
+      member { patch :toggle }
+    end
     resources :subscriptions, only: %i[index show new create] do
       member do
         patch :activate
