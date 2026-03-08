@@ -58,7 +58,7 @@ module Admin
     def charge
       authorize @subscription, :charge?
       Billing::Jobs::BillingJob.perform_later(@subscription.id)
-      redirect_to admin_root_path, notice: t("controllers.subscriptions.charge_queued")
+      redirect_to admin_subscription_path(@subscription), notice: t("controllers.subscriptions.charge_queued")
     end
 
     def update_payment_method

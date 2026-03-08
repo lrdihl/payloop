@@ -21,6 +21,7 @@ pt-BR:
       remove: "Remover"
       confirm_remove: "Confirmar remoção?"
       confirm_cancel: "Confirmar cancelamento?"
+      confirm_reprocess: "Confirmar reprocessamento da cobrança?"
     subscription_statuses:
       pending_payment: "Pagamento Pendente"
       active: "Ativa"
@@ -189,6 +190,7 @@ pt-BR:
         payment_method_card: "Método de Pagamento"
         update_button: "Atualizar"
         buttons:
+          reprocess: "Reprocessar"
           activate: "Ativar"
           fail: "Marcar Erro"
           retry: "Tentar Novamente"
