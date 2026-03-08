@@ -3,6 +3,10 @@ module Shared
     class Period
       attr_reader :count, :type
 
+      def self.human_type(type)
+        I18n.t("shared.interval_types.#{type}.one").capitalize
+      end
+
       def initialize(count:, type:)
         @count = count
         @type  = type
@@ -10,6 +14,13 @@ module Shared
 
       def lifetime?
         count.nil? && type.nil?
+      end
+
+      def to_s
+        return "—" if lifetime?
+
+        label = I18n.t("shared.interval_types.#{type}", count: count)
+        "#{count}x #{label}"
       end
 
       def advance_from(date)

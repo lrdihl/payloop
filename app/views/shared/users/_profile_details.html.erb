@@ -11,10 +11,10 @@
   <dt class="col-sm-4">Telefone</dt>
   <dd class="col-sm-8"><%= user.phone || "—" %></dd>
 
-  <dt class="col-sm-4">Role</dt>
+  <dt class="col-sm-4"><%= t("shared.roles.label") %></dt>
   <dd class="col-sm-8">
     <span class="badge bg-<%= user.admin? ? 'danger' : 'secondary' %>">
-      <%= user.role %>
+      <%= t("shared.roles.#{user.role}") %>
     </span>
   </dd>
 </dl>

@@ -49,7 +49,9 @@ app/
       contracts/        # Validação de plano
       operations/       # CreatePlan, UpdatePlan, DiscardPlan
     shared/
-      payment_methods/  # Registry + Base + CreditCard, Boleto, BankDeposit
+      payment_methods/  # Registry + Base + CreditCard, Boleto, BankDeposit, Manual
+                        # contracts/ TogglePaymentMethodContract
+                        # operations/ TogglePaymentMethod
       values/           # Money, Period (value objects)
     subscriptions/
       contracts/        # CreateSubscription, UpdatePaymentMethod
@@ -140,13 +142,29 @@ O gateway envia o resultado via `POST /webhooks/gateway_callbacks` autenticado c
 
 Registradas em `Shared::PaymentMethods::Registry` via initializer (`config/initializers/payment_methods.rb`):
 
-| Chave | Classe |
-|-------|--------|
-| `credit_card` | `Shared::PaymentMethods::CreditCard` |
-| `boleto` | `Shared::PaymentMethods::Boleto` |
-| `bank_deposit` | `Shared::PaymentMethods::BankDeposit` |
+| Chave | Classe | Selecionável |
+|-------|--------|:---:|
+| `credit_card` | `Shared::PaymentMethods::CreditCard` | ✓ |
+| `boleto` | `Shared::PaymentMethods::Boleto` | ✓ |
+| `bank_deposit` | `Shared::PaymentMethods::BankDeposit` | ✓ |
+| `manual` | `Shared::PaymentMethods::Manual` | — (admin only) |
 
-Para adicionar uma nova forma de pagamento basta criar uma classe que herda de `Base` e chama `Registry.register(:chave, self)`.
+### Feature flags em tempo real
+
+Cada método selecionável pode ser ativado ou desativado pelo admin em **`/admin/payment_method_configs`** sem necessidade de restart. O estado é persistido em `PaymentMethodConfig` e sincronizado com o Registry a cada toggle:
+
+- **Desativar** → o método some imediatamente dos formulários de nova assinatura
+- **Ativar** → o método volta a aparecer no próximo request
+- **Pós-restart** → o initializer (`to_prepare`) restaura o estado a partir do banco
+
+O método `manual` não possui flag — é acionado exclusivamente via `RegisterManualPayment` pelo admin.
+
+### Adicionar uma nova forma de pagamento
+
+1. Criar classe herdando de `Base` com `Registry.register(:chave, self)`
+2. Adicionar tradução em `config/locales/pt-BR.yml` → `shared.payment_methods.<chave>`
+3. Adicionar a chave em `PaymentMethodConfig::SELECTABLE_KEYS` (se selecionável)
+4. Rodar `make db_seed` para criar o `PaymentMethodConfig` inicial
 
 ---
 

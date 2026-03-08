@@ -11,7 +11,8 @@ class Payment < ApplicationRecord
   enum :status, {
     pending:   "pending",
     succeeded: "succeeded",
-    failed:    "failed"
+    failed:    "failed",
+    voided:    "voided"
   }, default: :pending
 
   # 5. Validations

@@ -1,0 +1,48 @@
+<div class="app-content-header">
+  <div class="container-fluid">
+    <h3 class="mb-0"><%= t(".title") %></h3>
+  </div>
+</div>
+
+<div class="app-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0"><%= t(".table_title") %></h5>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th><%= t(".columns.method") %></th>
+              <th><%= t(".columns.status") %></th>
+              <th><%= t(".columns.actions") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @methods.each do |key, klass| %>
+              <% config = @configs[key] %>
+              <% active = config&.enabled? %>
+              <tr>
+                <td><%= klass.new.human_name %></td>
+                <td>
+                  <span class="badge bg-<%= active ? 'success' : 'secondary' %>">
+                    <%= active ? t(".status.active") : t(".status.inactive") %>
+                  </span>
+                </td>
+                <td>
+                  <% if config %>
+                    <%= button_to active ? t(".toggle.disable") : t(".toggle.enable"),
+                          toggle_admin_payment_method_config_path(config),
+                          method: :patch,
+                          class: "btn btn-sm #{active ? 'btn-outline-danger' : 'btn-outline-success'}" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

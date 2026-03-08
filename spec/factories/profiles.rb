@@ -1,8 +1,11 @@
 FactoryBot.define do
+  sequence(:profile_document) { |n| n.to_s.rjust(11, "0") }
+  sequence(:profile_phone)    { |n| "479#{n.to_s.rjust(8, '0')}" }
+
   factory :profile do
     association :user
-    full_name { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
-    document  { Faker::Number.number(digits: 11).to_s }  # CPF fake
-    phone     { Faker::PhoneNumber.cell_phone }
+    full_name { "Usuário Teste" }
+    document  { generate(:profile_document) }
+    phone     { generate(:profile_phone) }
   end
 end

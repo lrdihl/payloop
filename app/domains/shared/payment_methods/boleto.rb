@@ -3,10 +3,6 @@ module Shared
     class Boleto < Base
       Registry.register(:boleto, self)
 
-      def human_name
-        "Boleto Bancário"
-      end
-
       def process(payment:)
         Rails.logger.info "[Boleto] Simulando cobrança de #{payment.amount}"
         payment.transaction_id   = SecureRandom.uuid

@@ -12,12 +12,16 @@ module Billing
         subscription = input.fetch(:subscription)
         plan         = subscription.plan
 
+        subscription.payments.pending.update_all(status: "voided")
+
+        next_attempt = subscription.payments.maximum(:attempt_number).to_i + 1
+
         payment = Payment.new(
           subscription:   subscription,
           amount:         plan.price,
           payment_method: subscription.payment_method,
           status:         :pending,
-          attempt_number: input.fetch(:attempt_number)
+          attempt_number: next_attempt
         )
 
         if payment.save

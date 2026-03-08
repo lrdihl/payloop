@@ -6,7 +6,7 @@ module Admin
 
     def require_admin!
       unless current_user.admin?
-        flash[:alert] = "Você não tem permissão para realizar esta ação."
+        flash[:alert] = t("flash.unauthorized")
         redirect_to root_path
       end
     end

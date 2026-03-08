@@ -1,8 +1,8 @@
-<% content_for :page_title, "Novo Plano" %>
+<% content_for :page_title, t(".title") %>
 
 <div class="card">
   <div class="card-header">
-    <h3 class="card-title">Novo Plano</h3>
+    <h3 class="card-title"><%= t(".title") %></h3>
   </div>
   <div class="card-body">
     <%= render "form", form_url: admin_plans_path, form_method: :post %>

@@ -34,7 +34,7 @@ module Admin
       )
 
       handle_result(result) do |profile|
-        redirect_to admin_user_path(profile.user), notice: "Usuário criado com sucesso."
+        redirect_to admin_user_path(profile.user), notice: t("controllers.users.created")
       end
     end
 
@@ -45,20 +45,28 @@ module Admin
     def update
       authorize @user
 
+      if params.dig(:user, :role).present? && policy(@user).update_role?
+        role_result = Identity::Operations::UpdateUserRole.new.call(
+          user: @user,
+          role: params[:user][:role]
+        )
+        return handle_result(role_result) { nil } if role_result.failure?
+      end
+
       result = Identity::Operations::UpdateProfile.new.call(
         profile:    @user.profile,
         attributes: profile_params
       )
 
       handle_result(result) do
-        redirect_to admin_user_path(@user), notice: "Usuário atualizado."
+        redirect_to admin_user_path(@user), notice: t("controllers.users.updated")
       end
     end
 
     def destroy
       authorize @user
       @user.destroy!
-      redirect_to admin_users_path, notice: "Usuário removido."
+      redirect_to admin_users_path, notice: t("controllers.users.destroyed")
     end
 
     # PATCH /admin/users/:id/role
@@ -71,7 +79,7 @@ module Admin
       )
 
       handle_result(result) do
-        redirect_to admin_user_path(@user), notice: "Papel atualizado."
+        redirect_to admin_user_path(@user), notice: t("controllers.users.role_updated")
       end
     end
 

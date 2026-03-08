@@ -44,8 +44,8 @@ RSpec.describe "Admin::Users", type: :request do
       expect(response.body).to include(customer.email)
     end
 
-    it "exibe formulário de update_role" do
-      expect(response.body).to include("update_role")
+    it "não exibe formulário de update_role no show" do
+      expect(response.body).not_to include("update_role")
     end
   end
 
@@ -60,6 +60,10 @@ RSpec.describe "Admin::Users", type: :request do
       expect(response.body).to include("full_name")
       expect(response.body).to include("document")
       expect(response.body).to include("phone")
+    end
+
+    it "exibe select de tipo (role) para admin" do
+      expect(response.body).to include("user[role]")
     end
   end
 

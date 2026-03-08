@@ -13,9 +13,9 @@ RSpec.describe "Home", type: :request do
     context "quando autenticado como admin" do
       before { sign_in create(:user, :admin) }
 
-      it "redireciona para admin_users_path" do
+      it "redireciona para admin_root_path" do
         get root_path
-        expect(response).to redirect_to(admin_users_path)
+        expect(response).to redirect_to(admin_root_path)
       end
     end
 

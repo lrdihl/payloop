@@ -1,24 +1,25 @@
 <div class="app-content-header">
   <div class="container-fluid">
-    <h3 class="mb-0">Assinaturas</h3>
+    <h3 class="mb-0"><%= t(".title") %></h3>
   </div>
 </div>
 
 <div class="app-content">
   <div class="container-fluid">
-    <%= link_to "Nova Assinatura", new_admin_subscription_path, class: "btn btn-primary mb-3" %>
+    <%= link_to t(".new"), new_admin_subscription_path, class: "btn btn-primary mb-3" %>
 
     <div class="card">
       <div class="card-body p-0">
         <table class="table table-striped mb-0">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Plano</th>
-              <th>Status</th>
-              <th>Próx. Vencimento</th>
-              <th>Encerramento</th>
+              <th><%= t(".columns.id") %></th>
+              <th><%= t(".columns.client") %></th>
+              <th><%= t(".columns.plan") %></th>
+              <th class="text-end"><%= t(".columns.value") %></th>
+              <th><%= t(".columns.status") %></th>
+              <th><%= t(".columns.next_due") %></th>
+              <th><%= t(".columns.closed_at") %></th>
               <th></th>
             </tr>
           </thead>
@@ -28,9 +29,10 @@
                 <td><%= subscription.id %></td>
                 <td><%= subscription.user.email %></td>
                 <td><%= subscription.plan.name %></td>
-                <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= subscription.status %></span></td>
-                <td><%= subscription.next_due_date %></td>
-                <td><%= subscription.closed_at || "Vitalício" %></td>
+                <td class="text-end"><%= subscription.plan.price %></td>
+                <td><span class="badge <%= status_badge_class(subscription.status) %>"><%= t("shared.subscription_statuses.#{subscription.status}") %></span></td>
+                <td><%= l(subscription.next_due_date) %></td>
+                <td><%= subscription.closed_at ? l(subscription.closed_at) : t(".lifetime") %></td>
                 <td><%= link_to "Ver", admin_subscription_path(subscription), class: "btn btn-sm btn-outline-secondary" %></td>
               </tr>
             <% end %>

@@ -4,7 +4,7 @@ module Admin
 
     layout "admin"
 
-    before_action :set_subscription, only: %i[show activate fail retry cancel close update_payment_method]
+    before_action :set_subscription, only: %i[show activate fail retry cancel close update_payment_method charge]
 
     def index
       authorize Subscription
@@ -26,13 +26,13 @@ module Admin
       result = Subscriptions::Operations::CreateSubscription.new.call(subscription_params)
 
       handle_result(result) do |subscription|
-        redirect_to admin_subscription_path(subscription), notice: "Assinatura criada com sucesso."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.created")
       end
     end
 
     def activate
       authorize @subscription, :activate?
-      handle_transition(Subscriptions::Operations::ActivateSubscription.new.call(@subscription))
+      handle_transition(Billing::Operations::RegisterManualPayment.new.call(@subscription))
     end
 
     def fail
@@ -55,6 +55,12 @@ module Admin
       handle_transition(Subscriptions::Operations::CloseSubscription.new.call(@subscription))
     end
 
+    def charge
+      authorize @subscription, :charge?
+      Billing::Jobs::BillingJob.perform_later(@subscription.id)
+      redirect_to admin_subscription_path(@subscription), notice: t("controllers.subscriptions.charge_queued")
+    end
+
     def update_payment_method
       authorize @subscription, :update_payment_method?
 
@@ -64,7 +70,7 @@ module Admin
       )
 
       handle_result(result) do |subscription|
-        redirect_to admin_subscription_path(subscription), notice: "Método de pagamento atualizado."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.payment_method_updated")
       end
     end
 
@@ -88,10 +94,10 @@ module Admin
     def handle_transition(result)
       case result
       in Dry::Monads::Success(subscription)
-        redirect_to admin_subscription_path(subscription), notice: "Assinatura atualizada."
+        redirect_to admin_subscription_path(subscription), notice: t("controllers.subscriptions.created")
       in Dry::Monads::Failure({ errors: errors })
         message = errors.values.flatten.first
-        redirect_to admin_subscription_path(@subscription), alert: "Transição inválida: #{message}"
+        redirect_to admin_subscription_path(@subscription), alert: t("controllers.subscriptions.invalid_transition", message: message)
       end
     end
   end

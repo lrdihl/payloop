@@ -1,0 +1,305 @@
+pt-BR:
+  app_name: "Payloop"
+
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      month_year: "%m/%Y"
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      month_year: "%m/%Y"
+
+  shared:
+    roles:
+      label:    "Tipo"
+      admin:    "Administrador"
+      customer: "Cliente"
+    payment_methods:
+      credit_card:  "Cartão de Crédito"
+      boleto:       "Boleto Bancário"
+      bank_deposit: "Depósito Bancário"
+      manual:       "Pagamento Manual"
+    errors:
+      header: "Por favor, corrija os erros abaixo:"
+    actions:
+      save: "Salvar"
+      cancel: "Cancelar"
+      back: "Voltar"
+      edit: "Editar"
+      remove: "Remover"
+      confirm_remove: "Confirmar remoção?"
+      confirm_cancel: "Confirmar cancelamento?"
+      confirm_reprocess: "Confirmar reprocessamento da cobrança?"
+    subscription_statuses:
+      pending_payment: "Pagamento Pendente"
+      active: "Ativa"
+      error_payment: "Erro no Pagamento"
+      canceled: "Cancelada"
+      closed: "Encerrada"
+    payment_statuses:
+      pending: "Pendente"
+      succeeded: "Aprovado"
+      failed: "Falhou"
+      voided: "Substituído"
+    interval_types:
+      month:
+        one: "mês"
+        other: "%{count} meses"
+      year:
+        one: "ano"
+        other: "%{count} anos"
+
+  flash:
+    unauthorized: "Você não tem permissão para realizar esta ação."
+
+  controllers:
+    registrations:
+      created: "Bem-vindo ao PAYLOOP, %{name}!"
+    users:
+      created: "Usuário criado com sucesso."
+      updated: "Usuário atualizado."
+      destroyed: "Usuário removido."
+      role_updated: "Papel atualizado."
+    plans:
+      created: "Plano criado com sucesso."
+      updated: "Plano atualizado."
+      destroyed: "Plano removido."
+    payment_method_configs:
+      updated: "Método de pagamento atualizado."
+      error:   "Não foi possível atualizar o método de pagamento."
+    subscriptions:
+      created: "Assinatura criada com sucesso."
+      canceled: "Assinatura cancelada."
+      payment_method_updated: "Método de pagamento atualizado."
+      invalid_transition: "Transição inválida: %{message}"
+      not_found: "Assinatura não encontrada."
+      already_active: "Você já possui uma assinatura ativa ou pendente."
+      charge_queued: "Cobrança reprocessada com sucesso."
+    profiles:
+      updated: "Perfil atualizado com sucesso."
+
+  admin:
+    users:
+      index:
+        title: "Usuários"
+        table_title: "Lista de Usuários"
+        new: "Novo Usuário"
+        columns:
+          id: "#"
+          email: "E-mail"
+          name: "Nome"
+          role: "Tipo"
+          actions: "Ações"
+      show:
+        title: "Usuário #%{id}"
+        card_title: "Dados do Usuário"
+        change_role: "Alterar Papel (Role)"
+        new_role_label: "Novo papel"
+        update_role_button: "Atualizar Role"
+      new:
+        title: "Novo Usuário"
+      edit:
+        title: "Editar Usuário"
+      form:
+        submit: "Salvar Usuário"
+        role_self_locked: "Você não pode alterar o próprio tipo."
+
+    dashboard:
+      index:
+        title: "Painel Administrativo"
+        billing_chart:
+          title: "Faturamento (últimos 5 meses)"
+        active_subscriptions:
+          title: "Assinaturas Ativas"
+          label: "assinaturas"
+        pending_section:
+          title: "Assinaturas com Pagamento Pendente"
+          empty: "Nenhuma assinatura com pagamento pendente."
+          columns:
+            client: "Cliente"
+            plan: "Plano"
+            due_date: "Vencimento"
+          payments_columns:
+            id: "#"
+            date: "Data"
+            amount: "Valor"
+            method: "Método"
+            attempt: "Tentativa"
+            status: "Status"
+            actions: "Ações"
+          reprocess: "Reprocessar"
+
+    plans:
+      index:
+        title: "Planos"
+        table_title: "Lista de Planos"
+        new: "Novo Plano"
+        columns:
+          id: "#"
+          name: "Nome"
+          price: "Preço"
+          recurrence: "Recorrência"
+          status: "Status"
+          actions: "Ações"
+        status:
+          active: "Ativo"
+          inactive: "Inativo"
+      show:
+        title: "Plano #%{id}"
+        fields:
+          id: "ID"
+          name: "Nome"
+          description: "Descrição"
+          price: "Preço"
+          recurrence: "Recorrência"
+          status: "Status"
+      new:
+        title: "Novo Plano"
+      edit:
+        title: "Editar Plano"
+      form:
+        name: "Nome"
+        description: "Descrição"
+        price_cents: "Preço (em centavos)"
+        currency: "Moeda"
+        interval_count: "Quantidade de intervalos"
+        interval_type: "Tipo de intervalo"
+        duration_count: "Duração (quantidade)"
+        duration_type: "Duração (tipo)"
+        duration_lifetime: "— Vitalício —"
+        duration_count_placeholder: "Deixe vazio para vitalício"
+        renewable: "Renovável após término"
+        active: "Ativo"
+        submit: "Salvar"
+
+    payment_method_configs:
+      index:
+        title: "Métodos de Pagamento"
+        table_title: "Configuração de Métodos de Pagamento"
+        columns:
+          method: "Método"
+          status: "Status"
+          actions: "Ações"
+        status:
+          active:   "Ativo"
+          inactive: "Inativo"
+        toggle:
+          enable:  "Ativar"
+          disable: "Desativar"
+
+    subscriptions:
+      index:
+        title: "Assinaturas"
+        new: "Nova Assinatura"
+        columns:
+          id: "ID"
+          client: "Cliente"
+          plan: "Plano"
+          value: "Valor"
+          status: "Status"
+          next_due: "Próx. Vencimento"
+          closed_at: "Encerramento"
+        lifetime: "Vitalício"
+      show:
+        title: "Assinatura #%{id}"
+        fields:
+          client: "Cliente"
+          plan: "Plano"
+          status: "Status"
+          joined_at: "Início"
+          next_due: "Próx. Vencimento"
+          closed_at: "Encerramento"
+          payment_method: "Método de Pagamento"
+          canceled_at: "Cancelado em"
+          residual_value: "Valor residual"
+        payment_method_undefined: "Não definido"
+        lifetime: "Vitalício"
+        payment_method_card: "Método de Pagamento"
+        update_button: "Atualizar"
+        buttons:
+          reprocess: "Reprocessar"
+          activate: "Ativar"
+          fail: "Marcar Erro"
+          retry: "Tentar Novamente"
+          cancel: "Cancelar"
+          close: "Encerrar"
+          back: "← Voltar"
+      new:
+        title: "Nova Assinatura"
+      form:
+        client: "Cliente"
+        client_blank: "Selecione um cliente"
+        plan: "Plano"
+        plan_blank: "Selecione um plano"
+        joined_at: "Data de início"
+        payment_method: "Método de Pagamento"
+        payment_method_blank: "Selecione um método"
+        submit: "Criar Assinatura"
+
+  customer:
+    subscriptions:
+      index:
+        title: "Minhas Assinaturas"
+        new: "Nova Assinatura"
+        empty: "Você ainda não possui assinaturas."
+        subscribe_link: "Assinar um plano"
+        columns:
+          plan: "Plano"
+          status: "Status"
+          payment_method: "Método de Pagamento"
+          joined_at: "Início"
+          next_due: "Próx. Vencimento"
+          closed_at: "Encerramento"
+        lifetime: "Vitalício"
+        cancel_button: "Cancelar"
+      new:
+        title: "Nova Assinatura"
+      form:
+        plan: "Plano"
+        plan_blank: "Selecione um plano"
+        payment_method: "Método de Pagamento"
+        payment_method_blank: "Selecione um método"
+        submit: "Assinar"
+
+    profiles:
+      show:
+        title: "Meu Perfil"
+        card_title: "Dados Pessoais"
+      edit:
+        title: "Editar Perfil"
+      form:
+        full_name: "Nome completo"
+        document: "CPF"
+        phone: "Telefone"
+        submit: "Salvar"
+
+  auth:
+    login:
+      title: "Entre com sua conta"
+      email: "E-mail"
+      email_placeholder: "seu@email.com"
+      password: "Senha"
+      password_placeholder: "Sua senha"
+      remember_me: "Lembrar de mim"
+      submit: "Entrar"
+      no_account: "Não tem conta?"
+      sign_up_link: "Cadastre-se"
+    register:
+      title: "Crie sua conta no Payloop"
+      email: "E-mail"
+      email_placeholder: "seu@email.com"
+      password: "Senha"
+      password_placeholder: "Mínimo 6 caracteres"
+      password_confirmation: "Confirmar Senha"
+      password_confirmation_placeholder: "Repita a senha"
+      profile_section: "Dados do perfil"
+      full_name: "Nome completo"
+      full_name_placeholder: "Maria da Silva"
+      document: "CPF"
+      document_placeholder: "00000000000"
+      phone: "Telefone"
+      phone_placeholder: "47999999999"
+      submit: "Criar conta"
+      already_have_account: "Já tem conta?"
+      sign_in_link: "Entrar"

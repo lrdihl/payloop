@@ -4,38 +4,49 @@
 
 <% if is_new %>
   <div class="mb-3">
-    <%= f.label :email, "E-mail", class: "form-label" %>
-    <%= f.email_field :email, class: "form-control", placeholder: "usuario@exemplo.com" %>
+    <%= f.label :email, t("auth.register.email"), class: "form-label" %>
+    <%= f.email_field :email, class: "form-control", placeholder: t("auth.register.email_placeholder") %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :password, "Senha", class: "form-label" %>
-    <%= f.password_field :password, class: "form-control", placeholder: "Mínimo 6 caracteres" %>
+    <%= f.label :password, t("auth.register.password"), class: "form-label" %>
+    <%= f.password_field :password, class: "form-control", placeholder: t("auth.register.password_placeholder") %>
   </div>
 
   <div class="mb-3">
-    <%= f.label :role, "Tipo de usuário", class: "form-label" %>
-    <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] },
+    <%= f.label :role, t("shared.roles.label"), class: "form-label" %>
+    <%= f.select :role, User.roles.keys.map { |r| [t("shared.roles.#{r}"), r] },
                  { selected: "customer" }, class: "form-select" %>
+  </div>
+<% elsif current_user.admin? %>
+  <% can_change_role = policy(f.object).update_role? %>
+  <div class="mb-3">
+    <%= f.label :role, t("shared.roles.label"), class: "form-label" %>
+    <%= f.select :role, User.roles.keys.map { |r| [t("shared.roles.#{r}"), r] },
+                 { selected: f.object.role },
+                 class: "form-select", disabled: !can_change_role %>
+    <% unless can_change_role %>
+      <small class="text-muted"><%= t("admin.users.form.role_self_locked") %></small>
+    <% end %>
   </div>
 <% end %>
 
 <hr class="my-3">
-<p class="text-muted small">Dados do perfil</p>
+<p class="text-muted small"><%= t("auth.register.profile_section") %></p>
 
 <%= f.fields_for :profile_attributes, @user.profile || Profile.new do |pf| %>
   <div class="mb-3">
-    <%= pf.label :full_name, "Nome completo", class: "form-label" %>
+    <%= pf.label :full_name, t("auth.register.full_name"), class: "form-label" %>
     <%= pf.text_field :full_name, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= pf.label :document, "CPF", class: "form-label" %>
+    <%= pf.label :document, t("auth.register.document"), class: "form-label" %>
     <%= pf.text_field :document, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= pf.label :phone, "Telefone", class: "form-label" %>
+    <%= pf.label :phone, t("auth.register.phone"), class: "form-label" %>
     <%= pf.text_field :phone, class: "form-control" %>
   </div>
 <% end %>
