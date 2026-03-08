@@ -190,7 +190,7 @@ Configurados em `config/recurring.yml`:
 ## Instalação e configuração
 
 ```bash
-git clone https://github.com/seu-usuario/payloop.git
+git clone https://github.com/lrdihl/payloop.git
 cd payloop
 cp .env.example .env
 make setup
