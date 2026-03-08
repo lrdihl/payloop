@@ -37,3 +37,8 @@ services:
         value: /app/vendor/bundle
       - key: BUNDLE_WITHOUT
         value: "development:test"
+
+    disk:
+      name: payloop-data
+      mountPath: /var/data
+      sizeGB: 1
