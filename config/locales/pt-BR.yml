@@ -163,6 +163,25 @@ pt-BR:
         active: "Ativo"
         submit: "Salvar"
 
+    payment_method_configs:
+      index:
+        title: "Métodos de Pagamento"
+        table_title: "Configuração de Métodos de Pagamento"
+        columns:
+          method: "Método"
+          status: "Status"
+          actions: "Ações"
+        status:
+          active:   "Ativo"
+          inactive: "Inativo"
+        toggle:
+          enable:  "Ativar"
+          disable: "Desativar"
+      payment_methods:
+        credit_card:  "Cartão de Crédito"
+        boleto:       "Boleto Bancário"
+        bank_deposit: "Depósito Bancário"
+
     subscriptions:
       index:
         title: "Assinaturas"
