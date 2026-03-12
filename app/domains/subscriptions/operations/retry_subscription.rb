@@ -2,6 +2,7 @@ module Subscriptions
   module Operations
     class RetrySubscription
       include Dry::Transaction
+      include Shared::Concerns::StaleObjectHandler
 
       step :check_transition
       step :update_status
@@ -17,14 +18,14 @@ module Subscriptions
       end
 
       def update_status(subscription)
-        if subscription.update(status: :pending_payment)
-          Billing::Jobs::BillingJob.perform_later(subscription.id)
-          Dry::Monads::Success(subscription)
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+        guard_stale do
+          if subscription.update(status: :pending_payment)
+            Billing::Jobs::BillingJob.perform_later(subscription.id)
+            Dry::Monads::Success(subscription)
+          else
+            Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+          end
         end
-      rescue ActiveRecord::StaleObjectError
-        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
     end
   end

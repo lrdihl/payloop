@@ -2,6 +2,7 @@ module Subscriptions
   module Operations
     class CancelSubscription
       include Dry::Transaction
+      include Shared::Concerns::StaleObjectHandler
 
       step :check_transition
       step :update_status
@@ -17,13 +18,13 @@ module Subscriptions
       end
 
       def update_status(subscription)
-        if subscription.update(status: :canceled, canceled_at: Date.current)
-          Dry::Monads::Success(subscription)
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+        guard_stale do
+          if subscription.update(status: :canceled, canceled_at: Date.current)
+            Dry::Monads::Success(subscription)
+          else
+            Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+          end
         end
-      rescue ActiveRecord::StaleObjectError
-        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
     end
   end

@@ -2,6 +2,7 @@ module Billing
   module Operations
     class HandleGatewayCallback
       include Dry::Transaction
+      include Shared::Concerns::StaleObjectHandler
 
       step :validate
       step :find_payment
@@ -44,17 +45,17 @@ module Billing
       def update_payment(input)
         return Dry::Monads::Success(input) if input[:already_processed]
 
-        payment  = input[:payment]
-        response = input[:gateway_response]
-        response = response.to_json unless response.is_a?(String) || response.nil?
+        guard_stale do
+          payment  = input[:payment]
+          response = input[:gateway_response]
+          response = response.to_json unless response.is_a?(String) || response.nil?
 
-        if payment.update(status: input[:status], gateway_response: response)
-          Dry::Monads::Success(input.merge(payment: payment))
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: payment.errors })
+          if payment.update(status: input[:status], gateway_response: response)
+            Dry::Monads::Success(input.merge(payment: payment))
+          else
+            Dry::Monads::Failure({ type: :persistence, errors: payment.errors })
+          end
         end
-      rescue ActiveRecord::StaleObjectError
-        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
 
       def propagate_to_subscription(input)

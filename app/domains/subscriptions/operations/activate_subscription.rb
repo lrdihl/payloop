@@ -2,6 +2,7 @@ module Subscriptions
   module Operations
     class ActivateSubscription
       include Dry::Transaction
+      include Shared::Concerns::StaleObjectHandler
 
       step :check_transition
       step :update_status
@@ -17,15 +18,15 @@ module Subscriptions
       end
 
       def update_status(subscription)
-        new_next_due_date = subscription.plan.interval.advance_from(subscription.next_due_date)
+        guard_stale do
+          new_next_due_date = subscription.plan.interval.advance_from(subscription.next_due_date)
 
-        if subscription.update(status: :active, next_due_date: new_next_due_date)
-          Dry::Monads::Success(subscription)
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+          if subscription.update(status: :active, next_due_date: new_next_due_date)
+            Dry::Monads::Success(subscription)
+          else
+            Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+          end
         end
-      rescue ActiveRecord::StaleObjectError
-        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
     end
   end
