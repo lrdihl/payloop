@@ -28,6 +28,9 @@ class ApplicationController < ActionController::Base
     in Dry::Monads::Failure({ type: :persistence, errors: errors })
       @errors = errors
       render_failure(:unprocessable_entity)
+    in Dry::Monads::Failure({ type: :stale, errors: errors })
+      @errors = errors
+      render_failure(:conflict)
     in Dry::Monads::Failure(error)
       @errors = { base: [ error.to_s ] }
       render_failure(:unprocessable_entity)

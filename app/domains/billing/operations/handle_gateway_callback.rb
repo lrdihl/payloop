@@ -53,6 +53,8 @@ module Billing
         else
           Dry::Monads::Failure({ type: :persistence, errors: payment.errors })
         end
+      rescue ActiveRecord::StaleObjectError
+        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
 
       def propagate_to_subscription(input)

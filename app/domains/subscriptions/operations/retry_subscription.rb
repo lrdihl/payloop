@@ -23,6 +23,8 @@ module Subscriptions
         else
           Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
         end
+      rescue ActiveRecord::StaleObjectError
+        Dry::Monads::Failure({ type: :stale, errors: { base: ["registro alterado por outro processo"] } })
       end
     end
   end
