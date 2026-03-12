@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_08_011134) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_200000) do
   create_table "payment_method_configs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "enabled", default: true, null: false
@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_08_011134) do
     t.datetime "created_at", null: false
     t.string "currency"
     t.text "gateway_response"
+    t.integer "lock_version", default: 0, null: false
     t.string "payment_method"
     t.string "status"
     t.integer "subscription_id", null: false
@@ -68,6 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_08_011134) do
     t.date "closed_at"
     t.datetime "created_at", null: false
     t.date "joined_at", null: false
+    t.integer "lock_version", default: 0, null: false
     t.date "next_due_date", null: false
     t.string "payment_method"
     t.integer "plan_id", null: false
