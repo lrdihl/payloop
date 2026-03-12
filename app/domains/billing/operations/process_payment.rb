@@ -10,24 +10,27 @@ module Billing
 
       def build_payment(input)
         subscription = input.fetch(:subscription)
-        plan         = subscription.plan
 
-        subscription.payments.pending.update_all(status: "voided")
+        subscription.with_lock do
+          plan = subscription.plan
 
-        next_attempt = subscription.payments.maximum(:attempt_number).to_i + 1
+          subscription.payments.pending.update_all(status: "voided")
 
-        payment = Payment.new(
-          subscription:   subscription,
-          amount:         plan.price,
-          payment_method: subscription.payment_method,
-          status:         :pending,
-          attempt_number: next_attempt
-        )
+          next_attempt = subscription.payments.maximum(:attempt_number).to_i + 1
 
-        if payment.save
-          Dry::Monads::Success(input.merge(payment: payment))
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: payment.errors })
+          payment = Payment.new(
+            subscription:   subscription,
+            amount:         plan.price,
+            payment_method: subscription.payment_method,
+            status:         :pending,
+            attempt_number: next_attempt
+          )
+
+          if payment.save
+            return Dry::Monads::Success(input.merge(payment: payment))
+          else
+            return Dry::Monads::Failure({ type: :persistence, errors: payment.errors })
+          end
         end
       end
 

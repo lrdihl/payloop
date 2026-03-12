@@ -21,7 +21,7 @@ module Subscriptions
       end
 
       def check_no_active(input)
-        conflict = Subscription.current.exists?(user_id: input[:user_id])
+        conflict = Subscription.current.lock.exists?(user_id: input[:user_id])
 
         if conflict
           Dry::Monads::Failure({ type: :conflict, errors: { base: [ "já existe uma assinatura ativa ou pendente" ] } })

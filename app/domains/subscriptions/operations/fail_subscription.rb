@@ -2,6 +2,7 @@ module Subscriptions
   module Operations
     class FailSubscription
       include Dry::Transaction
+      include Shared::Concerns::StaleObjectHandler
 
       step :check_transition
       step :update_status
@@ -17,10 +18,12 @@ module Subscriptions
       end
 
       def update_status(subscription)
-        if subscription.update(status: :error_payment)
-          Dry::Monads::Success(subscription)
-        else
-          Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+        guard_stale do
+          if subscription.update(status: :error_payment)
+            Dry::Monads::Success(subscription)
+          else
+            Dry::Monads::Failure({ type: :persistence, errors: subscription.errors })
+          end
         end
       end
     end
